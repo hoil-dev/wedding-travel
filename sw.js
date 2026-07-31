@@ -1,23 +1,24 @@
-const CACHE = 'honeymoon-v3';
+const CACHE = 'honeymoon-v4';
+const BASE  = '/wedding-travel';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/docs/mbs-confirm.png',
-  '/docs/pullman-confirm.png',
-  '/docs/flight-out.png',
-  '/docs/flight-ret.png',
-  '/docs/maldives-v.png',
-  '/docs/tips/tip-001.jpg',
-  '/docs/tips/tip-002.jpg',
-  '/docs/tips/tip-003.jpg',
-  '/docs/tips/tip-004.jpg',
-  '/docs/tips/tip-005.jpg',
-  '/docs/tips/tip-006.jpg',
+  BASE + '/',
+  BASE + '/index.html',
+  BASE + '/styles.css',
+  BASE + '/app.js',
+  BASE + '/manifest.json',
+  BASE + '/icons/icon-192.png',
+  BASE + '/icons/icon-512.png',
+  BASE + '/docs/mbs-confirm.png',
+  BASE + '/docs/pullman-confirm.png',
+  BASE + '/docs/flight-out.png',
+  BASE + '/docs/flight-ret.png',
+  BASE + '/docs/maldives-v.png',
+  BASE + '/docs/tips/tip-001.jpg',
+  BASE + '/docs/tips/tip-002.jpg',
+  BASE + '/docs/tips/tip-003.jpg',
+  BASE + '/docs/tips/tip-004.jpg',
+  BASE + '/docs/tips/tip-005.jpg',
+  BASE + '/docs/tips/tip-006.jpg',
 ];
 
 self.addEventListener('install', e => {
