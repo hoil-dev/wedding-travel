@@ -626,10 +626,11 @@ function openDocDB() {
 async function saveDocData(id, dataUrl, type, name, v = 1) {
   const db = await openDocDB();
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(DOC_STORE, 'readwrite');
-    tx.objectStore(DOC_STORE).put({ id, dataUrl, type, name, v, savedAt: Date.now() });
+    const tx  = db.transaction(DOC_STORE, 'readwrite');
+    const req = tx.objectStore(DOC_STORE).put({ id, dataUrl, type, name, v, savedAt: Date.now() });
+    req.onerror = () => reject(req.error);   // put 실패
     tx.oncomplete = resolve;
-    tx.onerror = () => reject(tx.error);
+    tx.onerror = () => reject(tx.error);     // 트랜잭션 실패
   });
 }
 
@@ -733,34 +734,82 @@ function handleFileSelect(id, input) {
   const file = input.files[0];
   if (!file) return;
 
-  showToast('저장 중...');
-  const reader = new FileReader();
-  reader.onload = async e => {
-    const dataUrl = e.target.result;
-    await saveDocData(id, dataUrl, file.type, file.name);
+  // 파일 크기 제한 (20MB)
+  const MAX_MB = 20;
+  if (file.size > MAX_MB * 1024 * 1024) {
+    showToast(`파일이 너무 큽니다 (최대 ${MAX_MB}MB)`);
+    input.value = '';
+    return;
+  }
 
-    // GitHub에도 업로드 (설정된 경우)
+  showToast('저장 중...');
+
+  // 저장 + 슬롯 재렌더 + GitHub 업로드
+  const afterSave = async (dataUrl, type) => {
+    try {
+      await saveDocData(id, dataUrl, type, file.name);
+    } catch (err) {
+      console.error('IndexedDB 저장 실패:', err);
+      showToast('저장 실패 — 저장 공간 부족일 수 있어요');
+      input.value = '';
+      return;
+    }
+
+    // GitHub 업로드
     if (getGhSettings()?.token) {
       showToast('GitHub에 업로드 중...');
-      const ok = await ghUploadFile(id, dataUrl, file.type);
-      showToast(ok ? 'GitHub 저장됨 ✓' : '로컬 저장됨 (GitHub 연결 확인)');
+      const ok = await ghUploadFile(id, dataUrl, type).catch(() => false);
+      showToast(ok ? 'GitHub 저장됨 ✓' : '로컬 저장됨 ✓');
     } else {
       showToast('저장됨! ✓');
     }
 
-    // Re-render the slot
-    const allSlots = DOC_SLOTS.flatMap(g => g.items);
-    const slot = allSlots.find(s => s.id === id);
+    // 슬롯 재렌더
+    const slot = DOC_SLOTS.flatMap(g => g.items).find(s => s.id === id);
     if (slot) {
       const oldEl = document.getElementById('slot-' + id);
-      if (oldEl) {
-        const newEl = await renderSlot(slot);
-        oldEl.replaceWith(newEl);
-      }
+      if (oldEl) oldEl.replaceWith(await renderSlot(slot));
     }
     input.value = '';
   };
-  reader.readAsDataURL(file);
+
+  if (file.type.startsWith('image/') && file.size > 800 * 1024) {
+    // 이미지 압축: 1920px 이하로 줄이고 JPEG 85% 품질로 저장
+    const objUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(objUrl);
+      const MAX_W = 1920;
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL('image/jpeg', 0.85);
+      const origMB  = (file.size / 1024 / 1024).toFixed(1);
+      const compKB  = Math.round(compressed.length * 0.75 / 1024);
+      console.log(`압축: ${origMB}MB → ${compKB}KB`);
+      afterSave(compressed, 'image/jpeg');
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objUrl);
+      // 압축 실패 시 원본으로 fallback
+      readAndSave();
+    };
+    img.src = objUrl;
+  } else {
+    readAndSave();
+  }
+
+  function readAndSave() {
+    const reader = new FileReader();
+    reader.onload  = e => afterSave(e.target.result, file.type || 'application/octet-stream');
+    reader.onerror = () => {
+      showToast('파일을 읽을 수 없어요 — 다시 시도해주세요');
+      input.value = '';
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
 // dataUrl → 원본 바이트 배열
