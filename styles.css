@@ -695,6 +695,15 @@ body {
   overflow: hidden;
 }
 
+/* 아이템이 버튼 위에 올라와서 기본 상태에서는 버튼이 안 보임 */
+.swipe-wrap .check-item {
+  position: relative;
+  z-index: 1;          /* 버튼(z-index:0)보다 위 → 버튼을 가림 */
+  background: white;
+  transition: transform 0.22s ease;
+}
+
+/* 버튼은 아이템 뒤에 숨어있다가 아이템이 왼쪽으로 밀리면 노출 */
 .swipe-del-btn {
   position: absolute;
   right: 0;
@@ -704,19 +713,14 @@ body {
   background: #FB7185;
   color: white;
   border: none;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
+  z-index: 0;           /* 아이템 뒤 */
   letter-spacing: 0.02em;
-}
-
-.swipe-wrap .check-item {
-  transition: transform 0.22s ease;
-  background: white;
 }
 
 /* ===== 항목 추가 패널 ===== */

@@ -225,49 +225,92 @@ function applySwipe(itemEl, onDelete) {
   wrap.appendChild(btn);
 
   let sx, sy, moved;
-  const reset = (animate = true) => {
-    itemEl.style.transition = animate ? 'transform 0.22s ease' : 'none';
+
+  const reset = () => {
+    itemEl.style.transition = 'transform 0.22s ease';
     itemEl.style.transform = '';
     wrap.classList.remove('open');
     if (_swiped === itemEl) _swiped = null;
   };
 
-  itemEl.addEventListener('touchstart', e => {
-    sx = e.touches[0].clientX; sy = e.touches[0].clientY; moved = false;
-    itemEl.style.transition = 'none';
+  const closeOthers = () => {
     if (_swiped && _swiped !== itemEl) {
       _swiped.style.transition = 'transform 0.22s ease';
       _swiped.style.transform = '';
       _swiped.closest('.swipe-wrap')?.classList.remove('open');
       _swiped = null;
     }
+  };
+
+  // 오른쪽 스와이프 → 체크 토글
+  const doCheck = () => {
+    // 커스텀 항목은 _toggle 콜백 사용
+    if (itemEl._toggle) {
+      itemEl._toggle();
+    } else {
+      // 하드코딩 항목: 체크박스 직접 토글
+      const cb = itemEl.querySelector('input[type="checkbox"]');
+      if (cb) {
+        cb.checked = !cb.checked;
+        handleCbClick(cb);
+      }
+    }
+    // 체크 애니메이션: 오른쪽으로 살짝 튕김
+    itemEl.style.transition = 'transform 0.12s ease';
+    itemEl.style.transform = 'translateX(18px)';
+    setTimeout(() => {
+      itemEl.style.transition = 'transform 0.18s ease';
+      itemEl.style.transform = '';
+    }, 130);
+  };
+
+  itemEl.addEventListener('touchstart', e => {
+    sx = e.touches[0].clientX;
+    sy = e.touches[0].clientY;
+    moved = false;
+    itemEl.style.transition = 'none';
+    closeOthers();
   }, { passive: true });
 
   itemEl.addEventListener('touchmove', e => {
     const dx = e.touches[0].clientX - sx;
     const dy = e.touches[0].clientY - sy;
-    if (!moved && Math.abs(dy) > Math.abs(dx)) return;
+    if (!moved && Math.abs(dy) > Math.abs(dx)) return; // 세로 스크롤
     moved = true;
-    if (dx < 0) itemEl.style.transform = `translateX(${Math.max(dx, -72)}px)`;
-    else if (wrap.classList.contains('open'))
+    if (dx < 0) {
+      // 왼쪽 스와이프 → 삭제 버튼 노출
+      itemEl.style.transform = `translateX(${Math.max(dx, -72)}px)`;
+    } else if (wrap.classList.contains('open')) {
+      // 이미 열린 상태에서 오른쪽 → 닫기
       itemEl.style.transform = `translateX(${Math.min(0, -72 + dx)}px)`;
+    }
+    // 오른쪽 스와이프는 실시간 이동 안 함 (체크는 손 뗄 때)
   }, { passive: true });
 
   itemEl.addEventListener('touchend', e => {
     if (!moved) return;
     const dx = e.changedTouches[0].clientX - sx;
     itemEl.style.transition = 'transform 0.22s ease';
-    if (dx < -36) {
+
+    if (dx < -40) {
+      // 왼쪽 충분히 → 삭제 버튼 고정
       itemEl.style.transform = 'translateX(-72px)';
       wrap.classList.add('open');
       _swiped = itemEl;
-    } else { reset(); }
+    } else if (dx > 40 && !wrap.classList.contains('open')) {
+      // 오른쪽 충분히 → 체크 토글
+      itemEl.style.transform = '';
+      doCheck();
+    } else {
+      reset();
+    }
   });
 
-  // 다른 곳 탭 시 닫기
+  // 열린 상태에서 다른 곳 탭 → 닫기
   itemEl.addEventListener('click', e => {
     if (wrap.classList.contains('open') && e.target !== btn) {
-      e.stopPropagation(); reset();
+      e.stopPropagation();
+      reset();
     }
   });
 }
@@ -327,6 +370,7 @@ function makeClItemEl(item, onToggle, onDelete) {
 
   div.appendChild(cb);
   div.appendChild(lbl);
+  div._toggle = doToggle; // 오른쪽 스와이프 체크용
   applySwipe(div, onDelete);
   return div;
 }
