@@ -1105,6 +1105,24 @@
     </div>
   </div>
 
+  <!-- 직접 추가 섹션 -->
+  <div class="custom-section" id="custom-section">
+    <div class="checklist-header" onclick="toggleSection(this)">
+      <div class="ch-left">
+        <span class="ch-icon">✏️</span>
+        <span class="ch-title">직접 추가</span>
+        <span class="ch-count" id="count-custom"></span>
+      </div>
+      <span class="ch-arrow">▾</span>
+    </div>
+    <div class="checklist-body" id="custom-list"></div>
+    <div class="custom-add-row">
+      <input class="custom-input" id="custom-input" type="text" placeholder="추가할 항목 입력..."
+        onkeydown="if(event.key==='Enter') addCustomItem()">
+      <button class="custom-add-btn" onclick="addCustomItem()">추가</button>
+    </div>
+  </div>
+
 </section>
 
 <!-- ===================== INFO PAGE ===================== -->

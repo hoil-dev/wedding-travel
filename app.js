@@ -61,6 +61,7 @@ window.addEventListener('DOMContentLoaded', () => {
   handleHash();
   initCountdown();
   initChecklist();
+  renderCustomList();
   updateGhStatusText();
   // 설정된 경우 백그라운드 동기화
   openDocDB().then(() => {
@@ -177,6 +178,11 @@ function updateProgress() {
     if (countEl) countEl.textContent = `${sDone}/${sTotal}`;
   });
 
+  // 커스텀 항목도 합산
+  const custom = loadCustomItems();
+  total += custom.length;
+  done  += custom.filter(i => i.done).length;
+
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   const bar = document.getElementById('progress-bar');
   const text = document.getElementById('progress-text');
@@ -186,6 +192,82 @@ function updateProgress() {
 
 function toggleSection(headerEl) {
   headerEl.classList.toggle('collapsed');
+}
+
+// ===== 커스텀 체크리스트 =====
+const CUSTOM_KEY = 'honeymoon-custom';
+
+function loadCustomItems() {
+  try { return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveCustomItems(items) {
+  localStorage.setItem(CUSTOM_KEY, JSON.stringify(items));
+}
+
+function renderCustomList() {
+  const list  = document.getElementById('custom-list');
+  const count = document.getElementById('count-custom');
+  if (!list) return;
+
+  const items = loadCustomItems();
+  list.innerHTML = '';
+
+  items.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'check-item' + (item.done ? ' done' : '');
+    div.innerHTML = `
+      <input type="checkbox" ${item.done ? 'checked' : ''}
+        onclick="toggleCustom(${idx}); event.stopPropagation()"
+        style="width:20px;height:20px;border-radius:6px;border:2px solid var(--gray-200);
+               appearance:none;-webkit-appearance:none;flex-shrink:0;margin-top:1px;
+               cursor:pointer;position:relative;transition:all .15s;background:white;">
+      <span class="check-label" onclick="toggleCustom(${idx})" style="cursor:pointer;flex:1">${escHtml(item.text)}</span>
+      <button class="delete-btn" onclick="deleteCustom(${idx})" title="삭제">✕</button>
+    `;
+    // 체크 스타일
+    const cb = div.querySelector('input');
+    if (item.done) {
+      cb.style.background = 'var(--teal)';
+      cb.style.borderColor = 'var(--teal)';
+    }
+    list.appendChild(div);
+  });
+
+  const done  = items.filter(i => i.done).length;
+  if (count) count.textContent = `${done}/${items.length}`;
+  updateProgress();
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function addCustomItem() {
+  const input = document.getElementById('custom-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  const items = loadCustomItems();
+  items.push({ text, done: false });
+  saveCustomItems(items);
+  input.value = '';
+  renderCustomList();
+}
+
+function toggleCustom(idx) {
+  const items = loadCustomItems();
+  if (!items[idx]) return;
+  items[idx].done = !items[idx].done;
+  saveCustomItems(items);
+  renderCustomList();
+}
+
+function deleteCustom(idx) {
+  const items = loadCustomItems();
+  items.splice(idx, 1);
+  saveCustomItems(items);
+  renderCustomList();
 }
 
 // ===== Copy =====

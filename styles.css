@@ -689,6 +689,66 @@ body {
   border-bottom: 1px solid var(--gray-100);
 }
 
+/* ===== 커스텀 체크리스트 ===== */
+.custom-section {
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.custom-add-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--gray-100);
+  background: var(--gray-50);
+}
+
+.custom-input {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--gray-200);
+  font-size: 0.85rem;
+  color: var(--gray-700);
+  font-family: inherit;
+  outline: none;
+  background: white;
+}
+
+.custom-input:focus { border-color: var(--teal); }
+
+.custom-add-btn {
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: none;
+  background: var(--teal);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.custom-add-btn:active { opacity: 0.85; }
+
+.check-item .delete-btn {
+  background: none;
+  border: none;
+  color: var(--gray-300);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 4px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.check-item:hover .delete-btn,
+.check-item:active .delete-btn { color: #FB7185; }
+
 .progress-bar-wrap {
   height: 4px;
   background: var(--gray-200);
