@@ -61,7 +61,7 @@ window.addEventListener('DOMContentLoaded', () => {
   handleHash();
   initCountdown();
   initChecklist();
-  renderCustomList();
+  initChecklistV2();
   updateGhStatusText();
   // 설정된 경우 백그라운드 동기화
   openDocDB().then(() => {
@@ -161,113 +161,318 @@ function saveCheck(id, checked) {
 }
 
 function updateProgress() {
-  let total = 0;
-  let done = 0;
+  let total = 0, done = 0;
+  const d = getClData();
 
-  Object.entries(SECTIONS).forEach(([sectionKey, section]) => {
-    let sTotal = 0, sDone = 0;
+  Object.entries(SECTIONS).forEach(([sk, section]) => {
+    let sT = 0, sD = 0;
     section.ids.forEach(id => {
+      if (d.deleted.includes(id)) return;
       const cb = document.getElementById(id);
-      if (cb) {
-        sTotal++;
-        total++;
-        if (cb.checked) { sDone++; done++; }
-      }
+      if (cb) { sT++; total++; if (cb.checked) { sD++; done++; } }
     });
-    const countEl = document.getElementById(section.countEl);
-    if (countEl) countEl.textContent = `${sDone}/${sTotal}`;
+    // 해당 섹션에 추가된 커스텀 항목
+    (d.extra[sk] || []).forEach(i => { sT++; total++; if (i.done) { sD++; done++; } });
+    const el = document.getElementById(section.countEl);
+    if (el) el.textContent = `${sD}/${sT}`;
   });
 
-  // 커스텀 항목도 합산
-  const custom = loadCustomItems();
-  total += custom.length;
-  done  += custom.filter(i => i.done).length;
+  // 커스텀 카테고리
+  (d.cats || []).forEach(cat => {
+    (cat.items || []).forEach(i => { total++; if (i.done) done++; });
+  });
 
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   const bar = document.getElementById('progress-bar');
-  const text = document.getElementById('progress-text');
+  const txt = document.getElementById('progress-text');
   if (bar) bar.style.width = pct + '%';
-  if (text) text.textContent = `${done} / ${total}`;
+  if (txt) txt.textContent = `${done} / ${total}`;
 }
 
 function toggleSection(headerEl) {
   headerEl.classList.toggle('collapsed');
 }
 
-// ===== 커스텀 체크리스트 =====
-const CUSTOM_KEY = 'honeymoon-custom';
+// ===== 커스텀 체크리스트 V2 =====
+const CL_KEY = 'honeymoon-cl-v2';
+// { deleted:[], extra:{pre:[],pack:[],sg:[],mv:[]}, cats:[{id,name,icon,items:[]}] }
 
-function loadCustomItems() {
-  try { return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || []; }
-  catch { return []; }
+function getClData() {
+  try {
+    const d = JSON.parse(localStorage.getItem(CL_KEY));
+    return d || { deleted: [], extra: {}, cats: [] };
+  } catch { return { deleted: [], extra: {}, cats: [] }; }
+}
+function saveClData(d) { localStorage.setItem(CL_KEY, JSON.stringify(d)); }
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-function saveCustomItems(items) {
-  localStorage.setItem(CUSTOM_KEY, JSON.stringify(items));
-}
+// --- 스와이프 삭제 ---
+let _swiped = null;
 
-function renderCustomList() {
-  const list  = document.getElementById('custom-list');
-  const count = document.getElementById('count-custom');
-  if (!list) return;
+function applySwipe(itemEl, onDelete) {
+  const wrap = document.createElement('div');
+  wrap.className = 'swipe-wrap';
+  itemEl.parentNode.insertBefore(wrap, itemEl);
+  wrap.appendChild(itemEl);
 
-  const items = loadCustomItems();
-  list.innerHTML = '';
+  const btn = document.createElement('button');
+  btn.className = 'swipe-del-btn';
+  btn.textContent = '삭제';
+  btn.onclick = e => { e.stopPropagation(); onDelete(); };
+  wrap.appendChild(btn);
 
-  items.forEach((item, idx) => {
-    const div = document.createElement('div');
-    div.className = 'check-item' + (item.done ? ' done' : '');
-    div.innerHTML = `
-      <input type="checkbox" ${item.done ? 'checked' : ''}
-        onclick="toggleCustom(${idx}); event.stopPropagation()"
-        style="width:20px;height:20px;border-radius:6px;border:2px solid var(--gray-200);
-               appearance:none;-webkit-appearance:none;flex-shrink:0;margin-top:1px;
-               cursor:pointer;position:relative;transition:all .15s;background:white;">
-      <span class="check-label" onclick="toggleCustom(${idx})" style="cursor:pointer;flex:1">${escHtml(item.text)}</span>
-      <button class="delete-btn" onclick="deleteCustom(${idx})" title="삭제">✕</button>
-    `;
-    // 체크 스타일
-    const cb = div.querySelector('input');
-    if (item.done) {
-      cb.style.background = 'var(--teal)';
-      cb.style.borderColor = 'var(--teal)';
+  let sx, sy, moved;
+  const reset = (animate = true) => {
+    itemEl.style.transition = animate ? 'transform 0.22s ease' : 'none';
+    itemEl.style.transform = '';
+    wrap.classList.remove('open');
+    if (_swiped === itemEl) _swiped = null;
+  };
+
+  itemEl.addEventListener('touchstart', e => {
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; moved = false;
+    itemEl.style.transition = 'none';
+    if (_swiped && _swiped !== itemEl) {
+      _swiped.style.transition = 'transform 0.22s ease';
+      _swiped.style.transform = '';
+      _swiped.closest('.swipe-wrap')?.classList.remove('open');
+      _swiped = null;
     }
-    list.appendChild(div);
+  }, { passive: true });
+
+  itemEl.addEventListener('touchmove', e => {
+    const dx = e.touches[0].clientX - sx;
+    const dy = e.touches[0].clientY - sy;
+    if (!moved && Math.abs(dy) > Math.abs(dx)) return;
+    moved = true;
+    if (dx < 0) itemEl.style.transform = `translateX(${Math.max(dx, -72)}px)`;
+    else if (wrap.classList.contains('open'))
+      itemEl.style.transform = `translateX(${Math.min(0, -72 + dx)}px)`;
+  }, { passive: true });
+
+  itemEl.addEventListener('touchend', e => {
+    if (!moved) return;
+    const dx = e.changedTouches[0].clientX - sx;
+    itemEl.style.transition = 'transform 0.22s ease';
+    if (dx < -36) {
+      itemEl.style.transform = 'translateX(-72px)';
+      wrap.classList.add('open');
+      _swiped = itemEl;
+    } else { reset(); }
   });
 
-  const done  = items.filter(i => i.done).length;
-  if (count) count.textContent = `${done}/${items.length}`;
+  // 다른 곳 탭 시 닫기
+  itemEl.addEventListener('click', e => {
+    if (wrap.classList.contains('open') && e.target !== btn) {
+      e.stopPropagation(); reset();
+    }
+  });
+}
+
+// --- 하드코딩된 항목에 스와이프 적용 ---
+function initHardcodedSwipe() {
+  const d = getClData();
+  document.querySelectorAll('#page-checklist .check-item').forEach(el => {
+    const cb = el.querySelector('input[type="checkbox"]');
+    if (!cb?.id) return;
+    if (d.deleted.includes(cb.id)) { el.style.display = 'none'; return; }
+    applySwipe(el, () => {
+      const d2 = getClData();
+      if (!d2.deleted.includes(cb.id)) d2.deleted.push(cb.id);
+      saveClData(d2);
+      el.closest('.swipe-wrap')?.remove();
+      updateProgress();
+    });
+  });
+}
+
+// --- 커스텀 항목 엘리먼트 생성 ---
+function makeClItemEl(item, onToggle, onDelete) {
+  const div = document.createElement('div');
+  div.className = 'check-item' + (item.done ? ' done' : '');
+
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.checked = !!item.done;
+  Object.assign(cb.style, {
+    width:'20px', height:'20px', borderRadius:'6px',
+    border: item.done ? '2px solid var(--teal)' : '2px solid var(--gray-200)',
+    appearance:'none', WebkitAppearance:'none',
+    flexShrink:'0', marginTop:'1px', cursor:'pointer',
+    position:'relative', transition:'all .15s',
+    background: item.done ? 'var(--teal)' : 'white',
+  });
+
+  const lbl = document.createElement('span');
+  lbl.className = 'check-label';
+  lbl.textContent = item.text;
+
+  const doToggle = () => {
+    const nowDone = !item.done;
+    item.done = nowDone;
+    div.classList.toggle('done', nowDone);
+    cb.checked = nowDone;
+    cb.style.background = nowDone ? 'var(--teal)' : 'white';
+    cb.style.borderColor = nowDone ? 'var(--teal)' : 'var(--gray-200)';
+    onToggle(nowDone);
+  };
+
+  cb.addEventListener('click', e => { e.stopPropagation(); doToggle(); });
+  div.addEventListener('click', e => {
+    if (!div.closest('.swipe-wrap')?.classList.contains('open')) doToggle();
+  });
+
+  div.appendChild(cb);
+  div.appendChild(lbl);
+  applySwipe(div, onDelete);
+  return div;
+}
+
+// --- 기존 섹션에 추가된 항목 렌더링 ---
+function renderExtraItems(sectionId) {
+  const body = document.querySelector(`.checklist-section[data-section="${sectionId}"] .checklist-body`);
+  if (!body) return;
+  body.querySelectorAll('.cl-extra-item').forEach(e => e.remove());
+
+  const d = getClData();
+  (d.extra[sectionId] || []).forEach((item, idx) => {
+    const el = makeClItemEl(item,
+      done => {
+        const d2 = getClData();
+        if (d2.extra[sectionId]?.[idx]) d2.extra[sectionId][idx].done = done;
+        saveClData(d2); updateProgress();
+      },
+      () => {
+        const d2 = getClData();
+        d2.extra[sectionId]?.splice(idx, 1);
+        saveClData(d2); renderExtraItems(sectionId); updateProgress();
+      }
+    );
+    el.classList.add('cl-extra-item');
+    body.appendChild(el);
+  });
+}
+
+// --- 커스텀 카테고리 렌더링 ---
+function renderCustomCats() {
+  const container = document.getElementById('cl-custom-cats');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const d = getClData();
+  (d.cats || []).forEach(cat => {
+    const sec = document.createElement('div');
+    sec.className = 'checklist-section';
+    sec.innerHTML = `
+      <div class="checklist-header" onclick="toggleSection(this)">
+        <div class="ch-left">
+          <span class="ch-icon">${cat.icon || '📝'}</span>
+          <span class="ch-title">${escHtml(cat.name)}</span>
+          <span class="ch-count" id="cnt-${cat.id}"></span>
+        </div>
+        <span class="ch-arrow">▾</span>
+      </div>
+      <div class="checklist-body" id="body-${cat.id}"></div>
+    `;
+    container.appendChild(sec);
+
+    const body = sec.querySelector(`#body-${cat.id}`);
+    (cat.items || []).forEach((item, idx) => {
+      const el = makeClItemEl(item,
+        done => {
+          const d2 = getClData();
+          const c2 = d2.cats.find(c => c.id === cat.id);
+          if (c2?.items[idx]) c2.items[idx].done = done;
+          saveClData(d2); updateProgress();
+        },
+        () => {
+          const d2 = getClData();
+          const c2 = d2.cats.find(c => c.id === cat.id);
+          if (c2) c2.items.splice(idx, 1);
+          saveClData(d2); renderCustomCats(); updateProgress();
+        }
+      );
+      body.appendChild(el);
+    });
+
+    const doneN = (cat.items || []).filter(i => i.done).length;
+    const cntEl = sec.querySelector(`#cnt-${cat.id}`);
+    if (cntEl) cntEl.textContent = `${doneN}/${(cat.items||[]).length}`;
+  });
+
+  refreshCatSelect();
+}
+
+// 카테고리 셀렉트 옵션 갱신
+function refreshCatSelect() {
+  const sel = document.getElementById('cl-cat-select');
+  if (!sel) return;
+  sel.querySelectorAll('[data-custom]').forEach(o => o.remove());
+  const newOpt = sel.querySelector('[value="__new__"]');
+  const d = getClData();
+  (d.cats || []).forEach(cat => {
+    const o = document.createElement('option');
+    o.value = cat.id;
+    o.textContent = `${cat.icon || '📝'} ${cat.name}`;
+    o.dataset.custom = '1';
+    sel.insertBefore(o, newOpt);
+  });
+}
+
+function handleClCatChange() {
+  const sel = document.getElementById('cl-cat-select');
+  const row = document.getElementById('cl-newcat-row');
+  const show = sel.value === '__new__';
+  row.style.display = show ? 'block' : 'none';
+  if (show) document.getElementById('cl-newcat-input')?.focus();
+}
+
+function addClItem() {
+  const sel   = document.getElementById('cl-cat-select');
+  const txt   = document.getElementById('cl-text-input');
+  const ncIn  = document.getElementById('cl-newcat-input');
+  const text  = txt?.value.trim();
+  if (!text) { txt?.focus(); return; }
+
+  const d = getClData();
+  let sid = sel.value;
+
+  if (sid === '__new__') {
+    const name = ncIn?.value.trim();
+    if (!name) { ncIn?.focus(); return; }
+    const catId = 'cat-' + Date.now();
+    d.cats.push({ id: catId, name, icon: '📝', items: [] });
+    sid = catId;
+    if (ncIn) ncIn.value = '';
+    document.getElementById('cl-newcat-row').style.display = 'none';
+    sel.value = 'pre';
+  }
+
+  const item = { id: sid + '-' + Date.now(), text, done: false };
+
+  if (['pre','pack','sg','mv'].includes(sid)) {
+    if (!d.extra[sid]) d.extra[sid] = [];
+    d.extra[sid].push(item);
+    saveClData(d);
+    renderExtraItems(sid);
+  } else {
+    const cat = d.cats.find(c => c.id === sid);
+    if (cat) { if (!cat.items) cat.items = []; cat.items.push(item); }
+    saveClData(d);
+    renderCustomCats();
+  }
+
+  txt.value = '';
   updateProgress();
 }
 
-function escHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function addCustomItem() {
-  const input = document.getElementById('custom-input');
-  const text  = input.value.trim();
-  if (!text) return;
-  const items = loadCustomItems();
-  items.push({ text, done: false });
-  saveCustomItems(items);
-  input.value = '';
-  renderCustomList();
-}
-
-function toggleCustom(idx) {
-  const items = loadCustomItems();
-  if (!items[idx]) return;
-  items[idx].done = !items[idx].done;
-  saveCustomItems(items);
-  renderCustomList();
-}
-
-function deleteCustom(idx) {
-  const items = loadCustomItems();
-  items.splice(idx, 1);
-  saveCustomItems(items);
-  renderCustomList();
+function initChecklistV2() {
+  initHardcodedSwipe();
+  ['pre','pack','sg','mv'].forEach(renderExtraItems);
+  renderCustomCats();
 }
 
 // ===== Copy =====

@@ -1105,21 +1105,25 @@
     </div>
   </div>
 
-  <!-- 직접 추가 섹션 -->
-  <div class="custom-section" id="custom-section">
-    <div class="checklist-header" onclick="toggleSection(this)">
-      <div class="ch-left">
-        <span class="ch-icon">✏️</span>
-        <span class="ch-title">직접 추가</span>
-        <span class="ch-count" id="count-custom"></span>
-      </div>
-      <span class="ch-arrow">▾</span>
+  <!-- 커스텀 카테고리 (JS가 여기에 렌더링) -->
+  <div id="cl-custom-cats"></div>
+
+  <!-- 항목 추가 패널 -->
+  <div class="cl-add-panel">
+    <div class="cl-add-title">✏️ 항목 추가</div>
+    <select class="cl-cat-select" id="cl-cat-select" onchange="handleClCatChange()">
+      <option value="pre">📋 출발 전 필수</option>
+      <option value="pack">🧳 짐 싸기</option>
+      <option value="sg">🇸🇬 싱가포르 현지</option>
+      <option value="mv">🏝️ 몰디브 현지</option>
+      <option value="__new__">＋ 새 카테고리 만들기</option>
+    </select>
+    <div class="cl-newcat-row" id="cl-newcat-row">
+      <input class="cl-newcat-input" id="cl-newcat-input" placeholder="새 카테고리 이름" onkeydown="if(event.key==='Enter') addClItem()">
     </div>
-    <div class="checklist-body" id="custom-list"></div>
-    <div class="custom-add-row">
-      <input class="custom-input" id="custom-input" type="text" placeholder="추가할 항목 입력..."
-        onkeydown="if(event.key==='Enter') addCustomItem()">
-      <button class="custom-add-btn" onclick="addCustomItem()">추가</button>
+    <div class="cl-input-row">
+      <input class="cl-text-input" id="cl-text-input" placeholder="항목 입력..." onkeydown="if(event.key==='Enter') addClItem()">
+      <button class="cl-add-btn" onclick="addClItem()">추가</button>
     </div>
   </div>
 
