@@ -1234,7 +1234,8 @@ body {
   font-weight: 600;
   margin-left: 6px;
 }
-.sync-badge.ok { background: #D1FAE5; color: #065F46; }
+.sync-badge.ok    { background: #D1FAE5; color: #065F46; }  /* GitHub 저장됨 */
+.sync-badge.local { background: #F1F5F9; color: #64748B; }  /* 로컬만 */
 .sync-badge.uploading { background: #FEF3C7; color: #92400E; }
 .sync-badge.error { background: #FEE2E2; color: #991B1B; }
 

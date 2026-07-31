@@ -695,11 +695,20 @@ async function renderSlot(slot) {
     const date = new Date(doc.savedAt);
     const dateStr = `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2,'0')} 저장`;
 
+    // GitHub 동기화 상태 배지
+    const synced = isGhSynced(slot.id);
+    const ghSettings = getGhSettings();
+    const syncBadge = ghSettings
+      ? (synced
+          ? `<span class="sync-badge ok">☁ GitHub</span>`
+          : `<span class="sync-badge local">📱 로컬만</span>`)
+      : '';  // GitHub 설정 없으면 배지 없음
+
     wrap.innerHTML = `
       <div class="doc-slot-filled" onclick="openViewer('${slot.id}', '${slot.label}')">
         ${thumbHtml}
         <div class="doc-slot-meta">
-          <div class="doc-slot-filled-label">${slot.label}</div>
+          <div class="doc-slot-filled-label">${slot.label} ${syncBadge}</div>
           <div class="doc-slot-saved">✓ ${dateStr}</div>
         </div>
         <div class="doc-slot-actions" onclick="event.stopPropagation()">
@@ -983,13 +992,31 @@ function mimeToExt(type) {
 }
 
 // GitHub API: 파일 업로드 (생성/덮어쓰기)
+// ===== GitHub 동기화 상태 추적 =====
+const GH_SYNCED_KEY = 'gh-synced';
+
+function getGhSynced() {
+  try { return JSON.parse(localStorage.getItem(GH_SYNCED_KEY)) || {}; }
+  catch { return {}; }
+}
+function markGhSynced(id, ok = true) {
+  const s = getGhSynced();
+  if (ok) s[id] = true; else delete s[id];
+  localStorage.setItem(GH_SYNCED_KEY, JSON.stringify(s));
+}
+function isGhSynced(id) {
+  // 미리 만들어둔 바우처 이미지는 항상 GitHub에 있음
+  if (PRELOAD_DOCS.some(p => p.id === id)) return true;
+  return !!getGhSynced()[id];
+}
+
 async function ghUploadFile(id, dataUrl, type) {
   const s = getGhSettings();
-  if (!s?.token) return;
+  if (!s?.token) return false;
 
   const ext     = mimeToExt(type);
   const path    = `uploads/${id}.${ext}`;
-  const content = dataUrl.split(',')[1]; // base64
+  const content = dataUrl.split(',')[1];
   const url     = `https://api.github.com/repos/${s.user}/${s.repo}/contents/${path}`;
   const headers = {
     Authorization: `Bearer ${s.token}`,
@@ -997,7 +1024,6 @@ async function ghUploadFile(id, dataUrl, type) {
     'Content-Type': 'application/json',
   };
 
-  // 기존 파일 SHA 조회 (업데이트 시 필요)
   let sha;
   try {
     const r = await fetch(url, { headers });
@@ -1008,6 +1034,7 @@ async function ghUploadFile(id, dataUrl, type) {
   if (sha) body.sha = sha;
 
   const res = await fetch(url, { method: 'PUT', headers, body: JSON.stringify(body) });
+  if (res.ok) markGhSynced(id, true);  // 성공 시 동기화 상태 기록
   return res.ok;
 }
 
@@ -1046,6 +1073,7 @@ async function syncFromGitHub(showFeedback = false) {
       });
 
       await saveDocData(id, dataUrl, blob.type, file.name);
+      markGhSynced(id, true);  // GitHub에서 받은 파일 → synced
       newCount++;
     }
 
