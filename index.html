@@ -712,14 +712,21 @@
       <div class="check-item" onclick="toggleCheck(this, event)">
         <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c1">
         <span class="check-label">
-          IMUGA 입국신고서 작성
+          IMUGA 입국신고서 작성 (신랑 LEE HOIL)
           <div class="check-sublabel">출발 96시간 전(8/1)부터 가능 · 몰디브 입국 시 QR 제시</div>
         </span>
       </div>
       <div class="check-item" onclick="toggleCheck(this, event)">
         <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c2">
         <span class="check-label">
-          QR코드 스크린샷 저장
+          IMUGA 입국신고서 작성 (신부 WON SOYEON)
+          <div class="check-sublabel">출발 96시간 전(8/1)부터 가능 · 몰디브 입국 시 QR 제시</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c2b">
+        <span class="check-label">
+          QR코드 스크린샷 저장 (신랑·신부 각각)
           <div class="check-sublabel">이메일 안 올 수 있으므로 스크린샷 필수</div>
         </span>
       </div>
@@ -1103,30 +1110,52 @@
 
   <!-- 항공 예약 -->
   <div class="card">
-    <div class="card-title">✈️ 항공 예약</div>
+    <div class="card-title">✈️ 출국 · DOETZ6</div>
+
     <div class="info-row">
-      <div class="info-label">출국 예약번호</div>
-      <div class="info-value mono">DOETZ6 <button class="copy-btn" onclick="copyText('DOETZ6')">복사</button><br><span style="font-size:0.7rem;color:var(--gray-400)">SQ607·SQ432 (싱가포르항공)</span></div>
+      <div class="info-label">예약번호</div>
+      <div class="info-value mono">DOETZ6 <button class="copy-btn" onclick="copyText('DOETZ6')">복사</button></div>
     </div>
     <div class="info-row">
-      <div class="info-label">귀국 예약번호</div>
-      <div class="info-value mono">FI8DCN <button class="copy-btn" onclick="copyText('FI8DCN')">복사</button><br><span style="font-size:0.7rem;color:var(--gray-400)">SQ437·SQ600 (싱가포르항공)</span></div>
+      <div class="info-label">SQ607</div>
+      <div class="info-value">
+        인천 T1 <strong>09:00</strong> → 창이 <strong>14:20</strong><br>
+        <span style="font-size:0.72rem;color:var(--gray-400)">8/3 (월) · Boeing 787</span><br>
+        💺 신랑 <strong>62J</strong> · 신부 <strong>62K</strong>
+      </div>
     </div>
     <div class="info-row">
-      <div class="info-label">SQ607 좌석</div>
-      <div class="info-value">신랑 <strong>62J</strong> · 신부 <strong>62K</strong><br><span style="font-size:0.7rem;color:var(--gray-400)">인천 T1 09:00 출발 · Boeing 787</span></div>
+      <div class="info-label">SQ432</div>
+      <div class="info-value">
+        창이 T2 <strong>10:20</strong> → 말레 T1 <strong>11:50</strong><br>
+        <span style="font-size:0.72rem;color:var(--gray-400)">8/5 (수) · A350-900</span><br>
+        💺 신랑 <strong>62E</strong> · 신부 <strong>62D</strong>
+      </div>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✈️ 귀국 · FI8DCN <span style="color:#FB7185;font-size:0.7rem;font-weight:500">시간 변경됨</span></div>
+
     <div class="info-row">
-      <div class="info-label">SQ432 좌석</div>
-      <div class="info-value">신랑 <strong>62E</strong> · 신부 <strong>62D</strong><br><span style="font-size:0.7rem;color:var(--gray-400)">창이 T2 10:20 출발 · A350-900</span></div>
+      <div class="info-label">예약번호</div>
+      <div class="info-value mono">FI8DCN <button class="copy-btn" onclick="copyText('FI8DCN')">복사</button></div>
     </div>
     <div class="info-row">
       <div class="info-label">SQ437 ⚠️</div>
-      <div class="info-value"><span style="color:#FB7185;font-weight:600">23:10 출발</span> (변경됨, 원래 23:25)<br><span style="font-size:0.7rem;color:var(--gray-400)">8/9 말레 → 싱가포르 07:10 도착</span></div>
+      <div class="info-value">
+        말레 <span style="color:#FB7185;font-weight:700">23:10</span> → 창이 <strong>07:10</strong><br>
+        <span style="font-size:0.72rem;color:var(--gray-400)">8/9→10 · 원래 23:25 출발</span><br>
+        💺 신랑 <strong>55H</strong> · 신부 <strong>55J</strong>
+      </div>
     </div>
     <div class="info-row">
       <div class="info-label">SQ600 ⚠️</div>
-      <div class="info-value"><span style="color:#FB7185;font-weight:600">08:10 출발</span> (변경됨, 원래 08:00)<br><span style="font-size:0.7rem;color:var(--gray-400)">8/10 싱가포르 → 인천 15:30 도착</span></div>
+      <div class="info-value">
+        창이 <span style="color:#FB7185;font-weight:700">08:10</span> → 인천 T1 <strong>15:30</strong><br>
+        <span style="font-size:0.72rem;color:var(--gray-400)">8/10 (일) · 원래 08:00 출발 · 환승 1시간</span><br>
+        💺 신랑 <strong>58B</strong> · 신부 <strong>58C</strong>
+      </div>
     </div>
     <a class="quick-link mt-8" href="https://www.singaporeair.com/managebooking" target="_blank">
       <div class="ql-left"><span class="ql-icon">🔗</span><div><div class="ql-title">싱가포르항공 예약 관리</div><div class="ql-sub">singaporeair.com/managebooking</div></div></div>
@@ -1360,7 +1389,40 @@
 <section class="page" id="page-docs">
 
   <div class="page-title">📂 서류함</div>
-  <div class="page-subtitle">사진으로 저장 · 탭해서 보기 · 앱에 자동 저장</div>
+  <div class="page-subtitle">사진으로 저장 · 탭해서 보기 · GitHub으로 기기 간 동기화</div>
+
+  <!-- GitHub 동기화 설정 -->
+  <div class="gh-card" id="gh-card">
+    <div class="gh-card-header" onclick="toggleGhCard()">
+      <div class="gh-card-left">
+        <span class="gh-icon">⚙️</span>
+        <div>
+          <div class="gh-title">GitHub 동기화</div>
+          <div class="gh-status-text" id="gh-status-text">설정 후 어떤 기기에서든 파일 공유</div>
+        </div>
+      </div>
+      <span class="gh-arrow" id="gh-arrow">▾</span>
+    </div>
+    <div class="gh-card-body" id="gh-card-body">
+      <div class="gh-field">
+        <label class="gh-label">GitHub 아이디</label>
+        <input class="gh-input" id="gh-user" placeholder="예: hoil123" autocapitalize="none" autocorrect="off">
+      </div>
+      <div class="gh-field">
+        <label class="gh-label">레포 이름</label>
+        <input class="gh-input" id="gh-repo" placeholder="예: wedding-travel" autocapitalize="none" autocorrect="off">
+      </div>
+      <div class="gh-field">
+        <label class="gh-label">Personal Access Token</label>
+        <input class="gh-input" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxx" autocapitalize="none">
+        <div class="gh-hint">GitHub → Settings → Developer settings → Personal access tokens → Fine-grained → Contents: Read & Write</div>
+      </div>
+      <div class="gh-actions">
+        <button class="gh-save-btn" onclick="saveGhSettingsUI()">저장</button>
+        <button class="gh-sync-btn" onclick="syncFromGitHub(true)">지금 동기화</button>
+      </div>
+    </div>
+  </div>
 
   <div id="doc-grid"></div>
 

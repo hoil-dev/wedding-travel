@@ -1028,6 +1028,82 @@ body {
 .bp-timing-sep { color: var(--gray-300); font-size: 0.8rem; }
 .bp-timing-warn { color: #F97316; font-weight: 600; font-size: 0.72rem; }
 
+/* ===== GITHUB SYNC CARD ===== */
+.gh-card {
+  background: white;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.gh-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  cursor: pointer;
+}
+
+.gh-card-left { display: flex; align-items: center; gap: 10px; }
+.gh-icon { font-size: 1.2rem; }
+.gh-title { font-size: 0.88rem; font-weight: 700; color: var(--gray-700); }
+.gh-status-text { font-size: 0.7rem; color: var(--gray-400); margin-top: 1px; }
+.gh-arrow { color: var(--gray-400); transition: transform 0.2s; font-size: 0.8rem; }
+.gh-arrow.open { transform: rotate(180deg); }
+
+.gh-card-body {
+  display: none;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--gray-100);
+}
+
+.gh-card-body.open { display: block; }
+
+.gh-field { margin-top: 12px; }
+.gh-label { font-size: 0.72rem; color: var(--gray-500); font-weight: 600; display: block; margin-bottom: 4px; }
+.gh-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--gray-200);
+  font-size: 0.85rem;
+  color: var(--gray-700);
+  font-family: inherit;
+  outline: none;
+  background: var(--gray-50);
+}
+.gh-input:focus { border-color: var(--teal); background: white; }
+.gh-hint { font-size: 0.68rem; color: var(--gray-400); margin-top: 4px; line-height: 1.4; }
+
+.gh-actions { display: flex; gap: 8px; margin-top: 14px; }
+.gh-save-btn, .gh-sync-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.gh-save-btn { background: var(--teal); color: white; }
+.gh-save-btn:active { opacity: 0.85; }
+.gh-sync-btn { background: var(--gray-100); color: var(--gray-600); }
+.gh-sync-btn:active { background: var(--gray-200); }
+
+/* 동기화 상태 뱃지 */
+.sync-badge {
+  font-size: 0.65rem;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-left: 6px;
+}
+.sync-badge.ok { background: #D1FAE5; color: #065F46; }
+.sync-badge.uploading { background: #FEF3C7; color: #92400E; }
+.sync-badge.error { background: #FEE2E2; color: #991B1B; }
+
 /* ===== TAB BAR (6 tabs) ===== */
 .tab-bar .tab-item .tab-label { font-size: 0.55rem; }
 

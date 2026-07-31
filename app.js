@@ -61,6 +61,12 @@ window.addEventListener('DOMContentLoaded', () => {
   handleHash();
   initCountdown();
   initChecklist();
+  updateGhStatusText();
+  // 설정된 경우 백그라운드 동기화
+  openDocDB().then(() => {
+    preloadVouchers();
+    syncFromGitHub(false);
+  });
 });
 
 // ===== Countdown =====
@@ -239,8 +245,10 @@ const DOC_SLOTS = [
   {
     group: '📋 입국 서류',
     items: [
-      { id: 'imuga-qr',     icon: '📋', label: 'IMUGA QR코드',       sub: '몰디브 입국신고서 · 8/1부터 발급' },
-      { id: 'insurance',    icon: '🛡️', label: '여행자 보험 증서',    sub: '' },
+      { id: 'imuga-qr-h',   icon: '📋', label: 'IMUGA QR (신랑)',    sub: 'LEE HOIL · 몰디브 입국신고서' },
+      { id: 'imuga-qr-s',   icon: '📋', label: 'IMUGA QR (신부)',    sub: 'WON SOYEON · 몰디브 입국신고서' },
+      { id: 'insurance-h',  icon: '🛡️', label: '여행자 보험 (신랑)',  sub: 'LEE HOIL' },
+      { id: 'insurance-s',  icon: '🛡️', label: '여행자 보험 (신부)',  sub: 'WON SOYEON' },
     ],
   },
   {
@@ -397,7 +405,18 @@ function handleFileSelect(id, input) {
   showToast('저장 중...');
   const reader = new FileReader();
   reader.onload = async e => {
-    await saveDocData(id, e.target.result, file.type, file.name);
+    const dataUrl = e.target.result;
+    await saveDocData(id, dataUrl, file.type, file.name);
+
+    // GitHub에도 업로드 (설정된 경우)
+    if (getGhSettings()?.token) {
+      showToast('GitHub에 업로드 중...');
+      const ok = await ghUploadFile(id, dataUrl, file.type);
+      showToast(ok ? 'GitHub 저장됨 ✓' : '로컬 저장됨 (GitHub 연결 확인)');
+    } else {
+      showToast('저장됨! ✓');
+    }
+
     // Re-render the slot
     const allSlots = DOC_SLOTS.flatMap(g => g.items);
     const slot = allSlots.find(s => s.id === id);
@@ -408,7 +427,6 @@ function handleFileSelect(id, input) {
         oldEl.replaceWith(newEl);
       }
     }
-    showToast('저장됨! ✓');
     input.value = '';
   };
   reader.readAsDataURL(file);
@@ -523,6 +541,143 @@ async function confirmDelete(id) {
     }
   }
   showToast('삭제됨');
+}
+
+// ===== GitHub 동기화 =====
+const GH_KEY = 'gh-settings';
+
+function getGhSettings() {
+  try { return JSON.parse(localStorage.getItem(GH_KEY)) || null; }
+  catch { return null; }
+}
+
+function updateGhStatusText() {
+  const s = getGhSettings();
+  const el = document.getElementById('gh-status-text');
+  if (!el) return;
+  if (s?.user && s?.repo && s?.token) {
+    el.textContent = `✅ ${s.user}/${s.repo} 연결됨`;
+  } else {
+    el.textContent = '설정 후 어떤 기기에서든 파일 공유';
+  }
+}
+
+function toggleGhCard() {
+  const body  = document.getElementById('gh-card-body');
+  const arrow = document.getElementById('gh-arrow');
+  const open  = body.classList.toggle('open');
+  arrow.classList.toggle('open', open);
+
+  if (open) {
+    const s = getGhSettings();
+    if (s) {
+      document.getElementById('gh-user').value  = s.user  || '';
+      document.getElementById('gh-repo').value  = s.repo  || '';
+      document.getElementById('gh-token').value = s.token || '';
+    }
+  }
+}
+
+function saveGhSettingsUI() {
+  const user  = document.getElementById('gh-user').value.trim();
+  const repo  = document.getElementById('gh-repo').value.trim();
+  const token = document.getElementById('gh-token').value.trim();
+  if (!user || !repo || !token) { showToast('모든 항목을 입력해주세요'); return; }
+  localStorage.setItem(GH_KEY, JSON.stringify({ user, repo, token }));
+  updateGhStatusText();
+  // 설정 후 바로 동기화
+  document.getElementById('gh-card-body').classList.remove('open');
+  document.getElementById('gh-arrow').classList.remove('open');
+  showToast('저장됨! 동기화 중...');
+  syncFromGitHub(true);
+}
+
+// MIME → 확장자
+function mimeToExt(type) {
+  const map = {
+    'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif',
+    'image/webp': 'webp', 'image/heic': 'heic',
+    'application/pdf': 'pdf', 'text/html': 'html',
+  };
+  return map[type] || type.split('/')[1] || 'bin';
+}
+
+// GitHub API: 파일 업로드 (생성/덮어쓰기)
+async function ghUploadFile(id, dataUrl, type) {
+  const s = getGhSettings();
+  if (!s?.token) return;
+
+  const ext     = mimeToExt(type);
+  const path    = `uploads/${id}.${ext}`;
+  const content = dataUrl.split(',')[1]; // base64
+  const url     = `https://api.github.com/repos/${s.user}/${s.repo}/contents/${path}`;
+  const headers = {
+    Authorization: `Bearer ${s.token}`,
+    Accept: 'application/vnd.github+json',
+    'Content-Type': 'application/json',
+  };
+
+  // 기존 파일 SHA 조회 (업데이트 시 필요)
+  let sha;
+  try {
+    const r = await fetch(url, { headers });
+    if (r.ok) sha = (await r.json()).sha;
+  } catch {}
+
+  const body = { message: `upload: ${id}`, content };
+  if (sha) body.sha = sha;
+
+  const res = await fetch(url, { method: 'PUT', headers, body: JSON.stringify(body) });
+  return res.ok;
+}
+
+// GitHub에서 uploads/ 목록 가져와 로컬에 없는 파일 내려받기
+async function syncFromGitHub(showFeedback = false) {
+  const s = getGhSettings();
+  if (!s?.user || !s?.repo) return;
+
+  if (showFeedback) showToast('GitHub 동기화 중...');
+
+  try {
+    const headers = s.token ? { Authorization: `Bearer ${s.token}`, Accept: 'application/vnd.github+json' } : {};
+    const res = await fetch(`https://api.github.com/repos/${s.user}/${s.repo}/contents/uploads`, { headers });
+    if (!res.ok) {
+      if (showFeedback) showToast(res.status === 404 ? '아직 업로드된 파일 없음' : '동기화 실패');
+      return;
+    }
+    const files = await res.json();
+    if (!Array.isArray(files)) return;
+
+    let newCount = 0;
+    for (const file of files) {
+      const id       = file.name.replace(/\.[^.]+$/, '');
+      const existing = await getDocData(id).catch(() => null);
+      if (existing) continue;
+
+      // raw URL로 직접 다운로드 (API content보다 빠름)
+      const dlRes = await fetch(file.download_url);
+      if (!dlRes.ok) continue;
+
+      const blob   = await dlRes.blob();
+      const dataUrl = await new Promise(r => {
+        const fr = new FileReader();
+        fr.onload = () => r(fr.result);
+        fr.readAsDataURL(blob);
+      });
+
+      await saveDocData(id, dataUrl, blob.type, file.name);
+      newCount++;
+    }
+
+    if (showFeedback) showToast(newCount > 0 ? `${newCount}개 파일 동기화됨 ✓` : '이미 최신 상태');
+
+    // docs 페이지가 열려있으면 새로고침
+    if (document.getElementById('page-docs').classList.contains('active')) {
+      initDocs();
+    }
+  } catch (e) {
+    if (showFeedback) showToast('동기화 오류: 설정 확인 필요');
+  }
 }
 
 // ===== 바우처 자동 사전 로드 =====
