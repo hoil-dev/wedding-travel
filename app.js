@@ -686,7 +686,7 @@ const PRELOAD_DOCS = [
   { id: 'mbs-confirm',  src: 'docs/mbs-confirm.png',      type: 'image/png', v: 1 },
   { id: 'pullman',      src: 'docs/pullman-confirm.png',   type: 'image/png', v: 1 },
   { id: 'flight-out',   src: 'docs/flight-out.png',        type: 'image/png', v: 1 },
-  { id: 'flight-ret',   src: 'docs/flight-ret.png',        type: 'image/png', v: 2 },
+  { id: 'flight-ret',   src: 'docs/flight-ret.png',        type: 'image/png', v: 3 },
   { id: 'maldives-v',   src: 'docs/maldives-v.png',        type: 'image/png', v: 1 },
   { id: 'tip-001', src: 'docs/tips/tip-001.jpg', type: 'image/jpeg', v: 1 },
   { id: 'tip-002', src: 'docs/tips/tip-002.jpg', type: 'image/jpeg', v: 1 },

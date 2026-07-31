@@ -1028,6 +1028,20 @@ body {
 .bp-timing-sep { color: var(--gray-300); font-size: 0.8rem; }
 .bp-timing-warn { color: #F97316; font-weight: 600; font-size: 0.72rem; }
 
+.bp-layover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 0;
+  font-size: 0.75rem;
+  color: var(--teal-dark);
+  font-weight: 600;
+  background: linear-gradient(135deg, #F0FAFA, #E8F8FF);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px dashed var(--teal-light);
+}
+
 /* ===== GITHUB SYNC CARD ===== */
 .gh-card {
   background: white;
