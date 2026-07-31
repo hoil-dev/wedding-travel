@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0E7490">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="허니문">
+  <meta name="robots" content="noindex, nofollow">
+  <title>🏝️ 신혼여행</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+
+<!-- ===================== 비밀번호 화면 ===================== -->
+<div class="lock-screen" id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-emoji">🏝️</div>
+    <div class="lock-title">신혼여행</div>
+    <div class="lock-sub">비밀번호를 입력하세요</div>
+    <input
+      class="lock-input"
+      id="lock-input"
+      type="password"
+      inputmode="numeric"
+      placeholder="••••"
+      autocomplete="current-password"
+      onkeydown="if(event.key==='Enter') checkPassword()"
+    >
+    <div class="lock-error" id="lock-error"></div>
+    <button class="lock-btn" onclick="checkPassword()">입장하기</button>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="app-header">
+  <h1>🏝️ 신혼여행 <span class="subtitle">싱가포르 · 몰디브</span></h1>
+</header>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ===================== HOME PAGE ===================== -->
+<section class="page active" id="page-home">
+
+  <!-- Countdown -->
+  <div class="countdown-card">
+    <div class="countdown-label">✈️ 출발까지</div>
+    <div class="countdown-number" id="countdown-num">-</div>
+    <div class="countdown-days" id="countdown-unit">일</div>
+    <div class="countdown-date">2026년 8월 3일 (월) 출발 · SQ607</div>
+    <div class="trip-progress">
+      <div class="trip-leg">
+        <div class="leg-icon">🇸🇬</div>
+        <div class="leg-name">싱가포르</div>
+        <div class="leg-dates">8/3 – 8/5</div>
+      </div>
+      <div class="trip-leg">
+        <div class="leg-icon">🏝️</div>
+        <div class="leg-name">몰디브</div>
+        <div class="leg-dates">8/5 – 8/9</div>
+      </div>
+      <div class="trip-leg">
+        <div class="leg-icon">🏠</div>
+        <div class="leg-name">귀국</div>
+        <div class="leg-dates">8/10</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flights -->
+  <!-- SQ607 -->
+  <div class="bp-card">
+    <div class="bp-header">
+      <div class="bp-left">
+        <span class="bp-num">SQ607</span>
+        <span class="bp-plane">Boeing 787</span>
+      </div>
+      <div class="bp-right">
+        <span class="bp-date">8/3 (월)</span>
+        <span class="bp-ref">DOETZ6</span>
+      </div>
+    </div>
+    <div class="bp-route">
+      <div class="bp-port">
+        <div class="bp-time">09:00</div>
+        <div class="bp-code">ICN</div>
+        <div class="bp-terminal">T1</div>
+      </div>
+      <div class="bp-arrow">
+        <div class="bp-line"></div>
+        <span>✈</span>
+        <div class="bp-line"></div>
+      </div>
+      <div class="bp-port bp-port-right">
+        <div class="bp-time">14:20</div>
+        <div class="bp-code">SIN</div>
+        <div class="bp-terminal">창이</div>
+      </div>
+    </div>
+    <div class="bp-seats">💺 신랑 <strong>62J</strong> · 신부 <strong>62K</strong></div>
+    <div class="bp-timing">
+      <div class="bp-timing-item">🏠 <span class="bp-timing-label">숙소 출발</span> <strong>06:00 이전</strong></div>
+      <div class="bp-timing-sep">·</div>
+      <div class="bp-timing-item">✈️ <span class="bp-timing-label">공항 도착</span> <strong>07:00</strong></div>
+    </div>
+  </div>
+
+  <!-- SQ432 -->
+  <div class="bp-card">
+    <div class="bp-header">
+      <div class="bp-left">
+        <span class="bp-num">SQ432</span>
+        <span class="bp-plane">A350-900</span>
+      </div>
+      <div class="bp-right">
+        <span class="bp-date">8/5 (수)</span>
+        <span class="bp-ref">DOETZ6</span>
+      </div>
+    </div>
+    <div class="bp-route">
+      <div class="bp-port">
+        <div class="bp-time">10:20</div>
+        <div class="bp-code">SIN</div>
+        <div class="bp-terminal">T2</div>
+      </div>
+      <div class="bp-arrow">
+        <div class="bp-line"></div>
+        <span>✈</span>
+        <div class="bp-line"></div>
+      </div>
+      <div class="bp-port bp-port-right">
+        <div class="bp-time">11:50</div>
+        <div class="bp-code">MLE</div>
+        <div class="bp-terminal">T1</div>
+      </div>
+    </div>
+    <div class="bp-seats">💺 신랑 <strong>62E</strong> · 신부 <strong>62D</strong></div>
+    <div class="bp-timing">
+      <div class="bp-timing-item">🏨 <span class="bp-timing-label">풀만 출발</span> <strong>08:00</strong></div>
+      <div class="bp-timing-sep">·</div>
+      <div class="bp-timing-item">✈️ <span class="bp-timing-label">공항 도착</span> <strong>08:20</strong></div>
+    </div>
+  </div>
+
+  <!-- SQ437 -->
+  <div class="bp-card">
+    <div class="bp-header">
+      <div class="bp-left">
+        <span class="bp-num">SQ437</span>
+        <span class="bp-plane bp-changed">⚠️ 시간 변경됨</span>
+      </div>
+      <div class="bp-right">
+        <span class="bp-date">8/9 (토)</span>
+        <span class="bp-ref">FI8DCN</span>
+      </div>
+    </div>
+    <div class="bp-route">
+      <div class="bp-port">
+        <div class="bp-time">23:10</div>
+        <div class="bp-code">MLE</div>
+        <div class="bp-terminal">벨라나</div>
+      </div>
+      <div class="bp-arrow">
+        <div class="bp-line"></div>
+        <span>✈</span>
+        <div class="bp-line"></div>
+      </div>
+      <div class="bp-port bp-port-right">
+        <div class="bp-time">07:10<span style="font-size:0.6rem;color:var(--gray-400)">+1</span></div>
+        <div class="bp-code">SIN</div>
+        <div class="bp-terminal">창이</div>
+      </div>
+    </div>
+    <div class="bp-seats">💺 신랑 <strong>55H</strong> · 신부 <strong>55J</strong></div>
+    <div class="bp-timing">
+      <div class="bp-timing-item">🛩 <span class="bp-timing-label">리조트 출발</span> <strong>14:00</strong></div>
+      <div class="bp-timing-sep">·</div>
+      <div class="bp-timing-item bp-timing-warn">⚠️ 수상비행기 막편 16:30</div>
+    </div>
+  </div>
+
+  <!-- SQ600 -->
+  <div class="bp-card">
+    <div class="bp-header">
+      <div class="bp-left">
+        <span class="bp-num">SQ600</span>
+        <span class="bp-plane bp-changed">⚠️ 시간 변경됨</span>
+      </div>
+      <div class="bp-right">
+        <span class="bp-date">8/10 (일)</span>
+        <span class="bp-ref">FI8DCN</span>
+      </div>
+    </div>
+    <div class="bp-route">
+      <div class="bp-port">
+        <div class="bp-time">08:10</div>
+        <div class="bp-code">SIN</div>
+        <div class="bp-terminal">창이</div>
+      </div>
+      <div class="bp-arrow">
+        <div class="bp-line"></div>
+        <span>✈</span>
+        <div class="bp-line"></div>
+      </div>
+      <div class="bp-port bp-port-right">
+        <div class="bp-time">15:30</div>
+        <div class="bp-code">ICN</div>
+        <div class="bp-terminal">T1</div>
+      </div>
+    </div>
+    <div class="bp-seats">💺 신랑 <strong>58B</strong> · 신부 <strong>58C</strong></div>
+    <div class="bp-timing">
+      <div class="bp-timing-item">🔁 <span class="bp-timing-label">SQ437 환승</span> <strong>07:10 도착 → 1시간 환승</strong></div>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div class="card">
+    <div class="card-title">⚠️ 지금 할 일</div>
+
+    <div class="alert-badge">
+      <div class="alert-icon">📋</div>
+      <div class="alert-text">
+        <div class="alert-title">IMUGA 입국신고서 작성</div>
+        8월 1일부터 작성 가능 · 작성 후 QR코드 스크린샷 필수 저장
+      </div>
+    </div>
+
+    <div class="alert-badge">
+      <div class="alert-icon">🍷</div>
+      <div class="alert-text">
+        <div class="alert-title">몰디브 주류 반입 금지</div>
+        면세점에서 주류 구매 금지 · 이슬람 국가라 반입 자체 불가
+      </div>
+    </div>
+
+    <div class="alert-badge">
+      <div class="alert-icon">🧳</div>
+      <div class="alert-text">
+        <div class="alert-title">수하물 무게 주의</div>
+        수상비행기 기준 1인 20kg + 기내 5kg · 초과 시 $4/kg
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="card">
+    <div class="card-title">🔗 빠른 링크</div>
+
+    <a class="quick-link" href="https://www.travelsmarttravelfast.com/en/maldives/imuga/" target="_blank">
+      <div class="ql-left">
+        <span class="ql-icon">🇲🇻</span>
+        <div>
+          <div class="ql-title">IMUGA 입국신고서</div>
+          <div class="ql-sub">출발 96시간 전부터 작성 가능 (8월 1일~)</div>
+        </div>
+      </div>
+      <span class="ql-arrow">›</span>
+    </a>
+
+    <a class="quick-link" href="https://www.singaporeair.com" target="_blank">
+      <div class="ql-left">
+        <span class="ql-icon">✈️</span>
+        <div>
+          <div class="ql-title">싱가포르 항공</div>
+          <div class="ql-sub">예약 확인 / 체크인</div>
+        </div>
+      </div>
+      <span class="ql-arrow">›</span>
+    </a>
+
+    <a class="quick-link" href="https://www.marinabaysands.com" target="_blank">
+      <div class="ql-left">
+        <span class="ql-icon">🏨</span>
+        <div>
+          <div class="ql-title">마리나베이샌즈</div>
+          <div class="ql-sub">Rise 뷔페 앱 예약 (10% 할인)</div>
+        </div>
+      </div>
+      <span class="ql-arrow">›</span>
+    </a>
+  </div>
+
+</section>
+
+<!-- ===================== SINGAPORE PAGE ===================== -->
+<section class="page" id="page-singapore">
+
+  <div class="page-title">🇸🇬 싱가포르</div>
+  <div class="page-subtitle">8월 3일(월) – 5일(수) · 2박 3일</div>
+
+  <!-- Day 1 -->
+  <div class="card">
+    <div class="day-header">
+      <div class="day-badge">DAY 1 · 8/3</div>
+      <div>
+        <div class="day-title">마리나베이샌즈 호캉스</div>
+        <div class="day-subtitle">14:20 싱가포르 도착</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Jewel+Changi+Airport" target="_blank">
+          🗺 창이공항 쥬얼 분수
+        </a>
+        <div class="timeline-desc">도착 후 쥬얼 내 레인 보텍스 분수 구경</div>
+      </div>
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Marina+Bay+Sands+Hotel+Singapore" target="_blank">
+          🗺 마리나베이샌즈 체크인
+        </a>
+        <div class="timeline-desc">3번 빌딩 카운터에서 체크인 (업그레이드 제일 잘 해줌)</div>
+        <div class="tip-box">💡 체크인 시 <strong>허니문 업그레이드</strong> + <strong>레이트체크아웃</strong> 요청 필수! 라운지 애프터눈티도 확인</div>
+      </div>
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Marina+Bay+Sands+Infinity+Pool" target="_blank">
+          🗺 인피니티풀
+        </a>
+        <div class="timeline-desc">투숙객 무제한 이용 · 오전 6-7시 사진 찍기 제일 좋음</div>
+      </div>
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Basha+Coffee+Marina+Bay+Sands" target="_blank">
+          🗺 바샤커피
+        </a>
+        <div class="timeline-desc">지하 2층 패션 애비뉴 · TWG 기념품도 함께</div>
+      </div>
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Rise+Restaurant+Marina+Bay+Sands" target="_blank">
+          🗺 Rise 뷔페 저녁
+        </a>
+        <div class="timeline-desc">MBS 앱으로 예약하면 10% 할인 + 포인트 적립 · 레터링 케이크 요청 가능</div>
+        <div class="tip-box">💡 룸서비스도 은근 저렴 · 송파바쿠테 배달도 OK</div>
+      </div>
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Marina+Bay+Sands+SkyPark+Observation+Deck" target="_blank">
+          🗺 스카이전망대 야경
+        </a>
+        <div class="timeline-desc">투숙객 무료 · 야경 수영장도 즐기기</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="card">
+    <div class="day-header">
+      <div class="day-badge">DAY 2 · 8/4</div>
+      <div>
+        <div class="day-title">풀만호텔 + 야경</div>
+        <div class="day-subtitle">관광 + 밤 야경 + 수영</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Marina+Bay+Sands+Infinity+Pool" target="_blank">
+          🗺 MBS 수영장 아침 수영
+        </a>
+        <div class="timeline-desc">체크아웃 후 짐 맡기고 수영장/샤워실 이용 가능</div>
+      </div>
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Tong+Ah+Eating+House+Singapore+kaya+toast" target="_blank">
+          🗺 카야샌드위치 브런치
+        </a>
+        <div class="timeline-desc">카야잼 토스트 맛집</div>
+      </div>
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Merlion+Park+Singapore" target="_blank">
+          🗺 머라이언파크
+        </a>
+        <div class="timeline-desc">사진 필수 스팟</div>
+      </div>
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Angelina+Singapore+Marina" target="_blank">
+          🗺 마리나 안젤리나카페
+        </a>
+        <div class="timeline-desc">카페 투어 + 바샤커피 테이크아웃 + TWG 기념품 구매</div>
+      </div>
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Pullman+Singapore+Hill+Street" target="_blank">
+          🗺 풀만 싱가포르 힐 스트리트 체크인
+        </a>
+        <div class="timeline-desc">1 Hill Street · Deluxe Room Bay View · 도착시간 12-13시 요청함 · 수영장 뷰 즐기기</div>
+      </div>
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Gardens+by+the+Bay+Singapore" target="_blank">
+          🗺 가든스바이더베이 슈퍼트리쇼
+        </a>
+        <div class="timeline-desc">7:45 / 8:45 · 입장료 무료 · 미리 가서 자리 잡기</div>
+      </div>
+      <div class="timeline-item">
+        <a class="place-link" href="https://maps.apple.com/?q=Jumbo+Seafood+Singapore" target="_blank">
+          🗺 점보씨푸드 칠리크랩
+        </a>
+        <div class="timeline-desc">싱가포르 필수 맛집 · 사전 예약 권장</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="card">
+    <div class="day-header">
+      <div class="day-badge">DAY 3 · 8/5</div>
+      <div>
+        <div class="day-title">몰디브 이동</div>
+        <div class="day-subtitle">SQ432 10:20 출발 → 몰디브 11:50 도착</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="place-link">🌅 체크아웃 후 공항 이동</span>
+        <div class="timeline-desc">SQ432 10:20 출발 · 충분한 여유 시간 확보</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">✈️ 싱가포르 → 말레 이동</span>
+        <div class="timeline-desc">말레 공항 도착 후 리조트 부스에서 직원 만나기 · 여권 + 바우처 지참</div>
+        <div class="tip-box">⚠️ 말레 공항에서 <strong>주류 맡기고</strong> 입국 (반입 금지)</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">🛩 수상비행기 탑승</span>
+        <div class="timeline-desc">TMA VIP 라운지 이용 · 마지막 운항 4:00~4:30 주의 · 25분 비행</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Food -->
+  <div class="section-divider"><span>싱가포르 먹거리</span></div>
+
+  <div class="card">
+    <div class="card-title">🍽 꼭 먹을 것</div>
+    <div class="food-grid">
+      <div class="food-item"><span>🍞</span> 카야잼 토스트</div>
+      <div class="food-item"><span>🍚</span> 치킨라이스</div>
+      <div class="food-item"><span>🦀</span> 칠리크랩</div>
+      <div class="food-item"><span>🍜</span> 락사</div>
+      <div class="food-item"><span>🥣</span> 바쿠테</div>
+      <div class="food-item"><span>☕</span> 바샤커피</div>
+    </div>
+  </div>
+
+  <!-- Souvenirs -->
+  <div class="card">
+    <div class="card-title">🎁 기념품</div>
+    <div class="souvenir-list">
+      <div class="souvenir-item"><span>🍵</span> TWG 티젤리</div>
+      <div class="souvenir-item"><span>🍯</span> 래플즈호텔 카야잼</div>
+      <div class="souvenir-item"><span>☕</span> 바샤 드립백</div>
+      <div class="souvenir-item"><span>🍪</span> 뱅가완솔로 쿠키</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===================== MALDIVES PAGE ===================== -->
+<section class="page" id="page-maldives">
+
+  <div class="page-title">🏝️ 몰디브</div>
+  <div class="page-subtitle">8월 5일(수) – 9일(일) · 4박 5일 · 아웃리거 마푸시바루</div>
+
+  <!-- Day 1 -->
+  <div class="card">
+    <div class="day-header">
+      <div class="day-badge">DAY 1 · 8/5</div>
+      <div>
+        <div class="day-title">도착 · 비치풀빌라 체크인</div>
+        <div class="day-subtitle">11:50 리조트 도착</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="place-link">🏨 체크인</span>
+        <div class="timeline-desc">도착 시 스파클링 와인 1병 + 과일바구니 + 허니문 케이크 + 로맨틱 침대&욕조 셋업</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">📋 당일 예약 필수</span>
+        <div class="timeline-desc">다이빙센터, 식사(테판야끼), 액티비티, 마사지 — <strong>첫날에 모두 예약!</strong></div>
+        <div class="tip-box">💡 테판야끼 불쇼 자리 예약 · 마사지는 90분으로 · 선라이즈/선셋 요가 예약</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">🤿 스노쿨링</span>
+        <div class="timeline-desc">선착장 옆 — 수심 얕고 파도 약함 · 아기상어 제일 많음 · 예쁜 조개/소라</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">🍽 Cuisine Gallery 디너</span>
+        <div class="timeline-desc">예약 필수 · 허니문 디너 셋업 (4박 이상 투숙 특전)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="card">
+    <div class="day-header">
+      <div class="day-badge">DAY 2 · 8/6</div>
+      <div>
+        <div class="day-title">요가 · 선셋투어</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="place-link">🧘 선라이즈 요가</span>
+        <div class="timeline-desc">데일리 클래스 · 예약 필요</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">🐠 선라이즈제티 스노쿨링</span>
+        <div class="timeline-desc">산호 · 물고기 많음 · 파도 잔잔</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">🚣 카약 / 패들보트</span>
+        <div class="timeline-desc">하루 1회 1시간 무료 (투명 카약은 유료)</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">🌅 선셋투어</span>
+        <div class="timeline-desc">선셋크루즈 1회 제공 특전 포함</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="card">
+    <div class="day-header">
+      <div class="day-badge">DAY 3 · 8/7</div>
+      <div>
+        <div class="day-title">액티비티 · 워터풀빌라 이동</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="place-link">🦈 익스커션</span>
+        <div class="timeline-desc">만타가오리 · 널스샤크 · 바다거북이 · 무조건 긴팔긴바지 착용</div>
+        <div class="tip-box">💡 워터밴드 많이 챙기기 (오리발 뒤꿈치 까짐)</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">🏝️ 워터풀빌라 체크인</span>
+        <div class="timeline-desc">선셋 워터 풀빌라 2박 시작</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">🍳 플로팅 조식 신청</span>
+        <div class="timeline-desc">워터풀빌라 특전 · 미리 신청 필요</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">🍫 Artisan 디너</span>
+        <div class="timeline-desc">퐁당쇼콜라 필수 · 리조트 제일 맛있는 레스토랑</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 4 -->
+  <div class="card">
+    <div class="day-header">
+      <div class="day-badge">DAY 4 · 8/8</div>
+      <div>
+        <div class="day-title">요가 · 마사지 · 휴식</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="place-link">🧘 선셋 요가</span>
+        <div class="timeline-desc">저녁 선셋 요가 클래스</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">💆 마사지 90분</span>
+        <div class="timeline-desc">스파 트리트먼트 10% 할인 · 스파 내 수영장/사우나 이용</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">🌙 별빛 영화감상</span>
+        <div class="timeline-desc">매주 일요일 별 아래 야외상영 (날씨/리조트 사정에 따라 변동)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 5 -->
+  <div class="card">
+    <div class="day-header">
+      <div class="day-badge">DAY 5 · 8/9</div>
+      <div>
+        <div class="day-title">마지막 날 · 출발</div>
+        <div class="day-subtitle">SQ437 23:25 출발</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="place-link">☀️ 마지막 조식 + 여유</span>
+        <div class="timeline-desc">Cuisine Gallery 조식</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">💆 레이트체크아웃 팁</span>
+        <div class="timeline-desc">스파 이용! 샤워실/수영장/사우나 갖춰있어 더위 피하기 딱</div>
+      </div>
+      <div class="timeline-item">
+        <span class="place-link">🛩 리조트 출발 → 말레공항</span>
+        <div class="timeline-desc">수상비행기 · SQ437 23:25 출발</div>
+        <div class="tip-box">⚠️ 항공 탑승 전 24시간 이내 <strong>다이빙 금지</strong> (감압증 위험)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activities -->
+  <div class="section-divider"><span>리조트 즐길 것</span></div>
+
+  <div class="card">
+    <div class="card-title">🤿 액티비티</div>
+    <div class="activity-grid">
+      <div class="activity-item">
+        <div class="act-icon">🦈</div>
+        <div class="act-name">널스샤크 투어</div>
+      </div>
+      <div class="activity-item">
+        <div class="act-icon">🐢</div>
+        <div class="act-name">바다거북이</div>
+      </div>
+      <div class="activity-item">
+        <div class="act-icon">🌅</div>
+        <div class="act-name">선셋크루즈</div>
+      </div>
+      <div class="activity-item">
+        <div class="act-icon">🤿</div>
+        <div class="act-name">스노쿨링</div>
+      </div>
+      <div class="activity-item">
+        <div class="act-icon">🧘</div>
+        <div class="act-name">선라이즈 요가</div>
+      </div>
+      <div class="activity-item">
+        <div class="act-icon">🚣</div>
+        <div class="act-name">카약 (무료)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meals -->
+  <div class="card">
+    <div class="card-title">🍽 식사 안내 (올인클루시브)</div>
+    <div class="meal-info">
+      <div class="meal-row">
+        <div class="meal-type">조식</div>
+        <div class="meal-detail">Cuisine Gallery · 메인 레스토랑</div>
+      </div>
+      <div class="meal-row">
+        <div class="meal-type">중식</div>
+        <div class="meal-detail">Edge Water Bar · 12:00~17:00</div>
+      </div>
+      <div class="meal-row">
+        <div class="meal-type">석식</div>
+        <div class="meal-detail">운영 중인 모든 레스토랑 (예약 필수)</div>
+      </div>
+      <div class="meal-row">
+        <div class="meal-type">스낵</div>
+        <div class="meal-detail">Koffe'N Chill · 11:00~19:00 · 아이스크림/스낵/음료</div>
+      </div>
+    </div>
+    <div class="tip-box mt-8">🍫 Artisan이 제일 맛있음 · 퐁당쇼콜라 필수<br>🍤 Edge Water Bar 코코넛새우튀김<br>🍹 Summerliving 칵테일 추천</div>
+  </div>
+
+  <!-- Tips -->
+  <div class="card">
+    <div class="card-title">💡 리조트 팁</div>
+    <div class="included-item">
+      <span class="check">💰</span>
+      <span>버틀러 팁 $60 · 청소 직원 $3 × 2회 · $1짜리 30개 준비</span>
+    </div>
+    <div class="included-item">
+      <span class="check">🌡</span>
+      <span>낮엔 엄청 더움 · 제일 시원한 곳은 숙소&외부화장실</span>
+    </div>
+    <div class="included-item">
+      <span class="check">🌙</span>
+      <span>밤엔 꽤 쌀쌀함 · 가디건/긴팔 필수</span>
+    </div>
+    <div class="included-item">
+      <span class="check">🍽</span>
+      <span>모든 식당 음식 나오는 속도 느림 · 다 먹으면 바로 말해주기</span>
+    </div>
+    <div class="included-item">
+      <span class="check">🪸</span>
+      <span>커피앤칠 아이스크림 있음 · 아이스크림 무료포함</span>
+    </div>
+    <div class="included-item">
+      <span class="check">💵</span>
+      <span>리조트 크레딧 $100/커플 제공 (8/5~10/31 기간 내)</span>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===================== CHECKLIST PAGE ===================== -->
+<section class="page" id="page-checklist">
+
+  <div class="page-title">✅ 체크리스트</div>
+  <div class="page-subtitle">탭해서 체크 · 자동 저장됨</div>
+
+  <div class="progress-label">
+    <span>전체 진행률</span>
+    <span id="progress-text">0 / 0</span>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+  </div>
+
+  <!-- Section: 출발 전 필수 -->
+  <div class="checklist-section" data-section="pre">
+    <div class="checklist-header" onclick="toggleSection(this)">
+      <div class="ch-left">
+        <span class="ch-icon">📋</span>
+        <span class="ch-title">출발 전 필수</span>
+        <span class="ch-count" id="count-pre"></span>
+      </div>
+      <span class="ch-arrow">▾</span>
+    </div>
+    <div class="checklist-body">
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c1">
+        <span class="check-label">
+          IMUGA 입국신고서 작성
+          <div class="check-sublabel">출발 96시간 전(8/1)부터 가능 · 몰디브 입국 시 QR 제시</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c2">
+        <span class="check-label">
+          QR코드 스크린샷 저장
+          <div class="check-sublabel">이메일 안 올 수 있으므로 스크린샷 필수</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c3">
+        <span class="check-label">
+          여권 유효기간 확인
+          <div class="check-sublabel">귀국일(8/10) 기준 6개월 이상 남아야 함</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c4">
+        <span class="check-label">
+          청첩장 챙기기
+          <div class="check-sublabel">마푸시바루 체크인 시 허니문 특전 확인용</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c5">
+        <span class="check-label">
+          신용카드 2장 이상
+          <div class="check-sublabel">체크인 시 신용카드 필수 · 비상용 1장 추가</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c6">
+        <span class="check-label">
+          USD 달러 환전
+          <div class="check-sublabel">$1짜리 30개 이상 · 버틀러/청소 팁용</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c7">
+        <span class="check-label">
+          여행자보험 가입
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c8">
+        <span class="check-label">
+          마리나베이샌즈 Rise 뷔페 예약
+          <div class="check-sublabel">MBS 앱으로 예약 → 10% 할인 + 포인트 적립</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c9">
+        <span class="check-label">
+          점보씨푸드 예약
+          <div class="check-sublabel">싱가포르 칠리크랩 맛집 · 사전 예약 권장</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c57">
+        <span class="check-label">
+          로밍 챙기기
+          <div class="check-sublabel">통신사 앱에서 출국 전 로밍 신청</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c58">
+        <span class="check-label">
+          짐 부치기 (공항)
+          <div class="check-sublabel">수상비행기 기준 1인 20kg + 기내 5kg</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c59">
+        <span class="check-label">면세 물품 챙기기</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: 짐 싸기 -->
+  <div class="checklist-section" data-section="pack">
+    <div class="checklist-header" onclick="toggleSection(this)">
+      <div class="ch-left">
+        <span class="ch-icon">🧳</span>
+        <span class="ch-title">짐 싸기</span>
+        <span class="ch-count" id="count-pack"></span>
+      </div>
+      <span class="ch-arrow">▾</span>
+    </div>
+    <div class="checklist-body">
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c10">
+        <span class="check-label">
+          여권 (신랑 + 신부)
+          <div class="check-sublabel">LEE HOIL / WON SOYEON</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c11">
+        <span class="check-label">
+          워터밴드 (많이)
+          <div class="check-sublabel">오리발 뒤꿈치 까짐 방지 · 넉넉하게 챙기기</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c12">
+        <span class="check-label">
+          얇은 긴팔 + 긴바지
+          <div class="check-sublabel">익스커션 시 착용 필수</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c13">
+        <span class="check-label">
+          가디건 / 얇은 재킷
+          <div class="check-sublabel">몰디브 밤엔 꽤 쌀쌀함</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c14">
+        <span class="check-label">
+          선크림 (SPF 50+, 워터프루프)
+          <div class="check-sublabel">물놀이 많으므로 넉넉하게</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c15">
+        <span class="check-label">
+          구급약
+          <div class="check-sublabel">지사제, 두통약, 밴드, 소화제</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c16">
+        <span class="check-label">
+          달러 현금 $1 × 30장
+          <div class="check-sublabel">팁 문화 · 버틀러/청소 직원용</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c17">
+        <span class="check-label">
+          수영복 (여러 벌)
+          <div class="check-sublabel">매일 수영 예정 · 빨리 안 마름</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c18">
+        <span class="check-label">
+          수하물 무게 확인
+          <div class="check-sublabel">수상비행기 기준: 1인 20kg + 기내 5kg</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c19">
+        <span class="check-label">
+          방수 파우치 / 핸드폰 방수케이스
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c20">
+        <span class="check-label">
+          충전기 + 멀티어댑터
+          <div class="check-sublabel">몰디브 220V · 영국식 3핀 플러그</div>
+        </span>
+      </div>
+
+      <!-- 기본 준비물 추가 -->
+      <div class="check-subheader">기본 준비물</div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c34">
+        <span class="check-label">속옷</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c35">
+        <span class="check-label">양말</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c36">
+        <span class="check-label">잠옷</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c37">
+        <span class="check-label">
+          세면도구
+          <div class="check-sublabel">칫솔 · 치약 · 폼클렌징 · 샴푸</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c38">
+        <span class="check-label">지퍼락</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c39">
+        <span class="check-label">옷 (여벌)</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c40">
+        <span class="check-label">이어폰</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c41">
+        <span class="check-label">
+          면도세트
+          <div class="check-sublabel">쉐이빙폼 · 도루코 74미리</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c42">
+        <span class="check-label">로션</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c43">
+        <span class="check-label">슬리퍼</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c44">
+        <span class="check-label">선글라스</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c45">
+        <span class="check-label">목베개</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c46">
+        <span class="check-label">모기퇴치제</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c47">
+        <span class="check-label">모기 물렸을 때 바를 것</span>
+      </div>
+
+      <!-- 장기여행 추가 -->
+      <div class="check-subheader">장기여행 추가</div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c48">
+        <span class="check-label">펜</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c49">
+        <span class="check-label">
+          보조배터리
+          <div class="check-sublabel">기내 수하물 필수 · 위탁 불가</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c50">
+        <span class="check-label">우산</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c51">
+        <span class="check-label">
+          돼지코
+          <div class="check-sublabel">싱가포르·몰디브 플러그 변환용</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c52">
+        <span class="check-label">테니스화</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: 싱가포르 현지 -->
+  <div class="checklist-section" data-section="sg">
+    <div class="checklist-header" onclick="toggleSection(this)">
+      <div class="ch-left">
+        <span class="ch-icon">🇸🇬</span>
+        <span class="ch-title">싱가포르 현지</span>
+        <span class="ch-count" id="count-sg"></span>
+      </div>
+      <span class="ch-arrow">▾</span>
+    </div>
+    <div class="checklist-body">
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c21">
+        <span class="check-label">
+          허니문 업그레이드 요청 (체크인 시)
+          <div class="check-sublabel">3번 빌딩 카운터 · 레이트체크아웃도 함께 요청</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c22">
+        <span class="check-label">
+          인피니티풀 새벽 6-7시 사진
+          <div class="check-sublabel">그 시간대가 제일 예쁨</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c23">
+        <span class="check-label">
+          가든스바이더베이 슈퍼트리쇼 자리 잡기
+          <div class="check-sublabel">7:45 or 8:45 · 미리 가서 앉아있기 · 입장 무료</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c24">
+        <span class="check-label">
+          TWG 기념품 구매
+          <div class="check-sublabel">MBS 지하 2층 패션 애비뉴</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c25">
+        <span class="check-label">
+          바샤커피 드립백 구매
+          <div class="check-sublabel">MBS 지하 2층 · 바샤 포인트로 쓸 수 있음</div>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: 몰디브 현지 -->
+  <div class="checklist-section" data-section="mv">
+    <div class="checklist-header" onclick="toggleSection(this)">
+      <div class="ch-left">
+        <span class="ch-icon">🏝️</span>
+        <span class="ch-title">몰디브 현지</span>
+        <span class="ch-count" id="count-mv"></span>
+      </div>
+      <span class="ch-arrow">▾</span>
+    </div>
+    <div class="checklist-body">
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c26">
+        <span class="check-label">
+          체크인 당일 다이빙센터 예약
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c27">
+        <span class="check-label">
+          체크인 당일 테판야끼 예약 (불쇼 자리)
+          <div class="check-sublabel">Koto 테판야끼 · 불쇼 자리 요청 · 디저트 셔벗 필수</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c28">
+        <span class="check-label">
+          선라이즈 / 선셋 요가 예약
+          <div class="check-sublabel">데일리 클래스 · 예약 필수</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c29">
+        <span class="check-label">
+          마사지 90분 예약
+          <div class="check-sublabel">스파 트리트먼트 10% 할인 적용</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c30">
+        <span class="check-label">
+          플로팅 조식 신청
+          <div class="check-sublabel">워터풀빌라 특전 · 미리 신청 필요</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c31">
+        <span class="check-label">
+          허니문 디너 셋업 요청
+          <div class="check-sublabel">4박 이상 투숙 특전 · Cuisine Gallery</div>
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c32">
+        <span class="check-label">
+          버틀러 팁 $60 전달
+        </span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, event)">
+        <input type="checkbox" onclick="handleCbClick(this);event.stopPropagation()" id="c33">
+        <span class="check-label">
+          출발 24시간 전 다이빙 중단
+          <div class="check-sublabel">감압증 위험 · SQ437 23:10 기준 전날 23시 이후 금지</div>
+        </span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===================== INFO PAGE ===================== -->
+<section class="page" id="page-info">
+
+  <div class="page-title">📋 중요 정보</div>
+  <div class="page-subtitle">예약번호 · 주의사항 · 특전</div>
+
+  <!-- 항공 예약 -->
+  <div class="card">
+    <div class="card-title">✈️ 항공 예약</div>
+    <div class="info-row">
+      <div class="info-label">출국 예약번호</div>
+      <div class="info-value mono">DOETZ6 <button class="copy-btn" onclick="copyText('DOETZ6')">복사</button><br><span style="font-size:0.7rem;color:var(--gray-400)">SQ607·SQ432 (싱가포르항공)</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">귀국 예약번호</div>
+      <div class="info-value mono">FI8DCN <button class="copy-btn" onclick="copyText('FI8DCN')">복사</button><br><span style="font-size:0.7rem;color:var(--gray-400)">SQ437·SQ600 (싱가포르항공)</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">SQ607 좌석</div>
+      <div class="info-value">신랑 <strong>62J</strong> · 신부 <strong>62K</strong><br><span style="font-size:0.7rem;color:var(--gray-400)">인천 T1 09:00 출발 · Boeing 787</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">SQ432 좌석</div>
+      <div class="info-value">신랑 <strong>62E</strong> · 신부 <strong>62D</strong><br><span style="font-size:0.7rem;color:var(--gray-400)">창이 T2 10:20 출발 · A350-900</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">SQ437 ⚠️</div>
+      <div class="info-value"><span style="color:#FB7185;font-weight:600">23:10 출발</span> (변경됨, 원래 23:25)<br><span style="font-size:0.7rem;color:var(--gray-400)">8/9 말레 → 싱가포르 07:10 도착</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">SQ600 ⚠️</div>
+      <div class="info-value"><span style="color:#FB7185;font-weight:600">08:10 출발</span> (변경됨, 원래 08:00)<br><span style="font-size:0.7rem;color:var(--gray-400)">8/10 싱가포르 → 인천 15:30 도착</span></div>
+    </div>
+    <a class="quick-link mt-8" href="https://www.singaporeair.com/managebooking" target="_blank">
+      <div class="ql-left"><span class="ql-icon">🔗</span><div><div class="ql-title">싱가포르항공 예약 관리</div><div class="ql-sub">singaporeair.com/managebooking</div></div></div>
+      <span class="ql-arrow">›</span>
+    </a>
+  </div>
+
+  <!-- 마리나베이샌즈 -->
+  <div class="card">
+    <div class="card-title">🏨 마리나베이샌즈</div>
+    <div class="info-row">
+      <div class="info-label">확인코드</div>
+      <div class="info-value mono">7518850 <button class="copy-btn" onclick="copyText('7518850')">복사</button></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">체크인</div>
+      <div class="info-value">8/3 (월) 오후 3시 이후<br><span style="font-size:0.7rem;color:var(--gray-400)">호텔 타워 1 로비</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">체크아웃</div>
+      <div class="info-value">8/4 (화)</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">객실</div>
+      <div class="info-value">샌즈 프리미어룸<br><span style="font-size:0.7rem;color:var(--gray-400)">가든스 바이 더 베이 뷰 · 킹베드</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">게스트 릴레이션</div>
+      <div class="info-value">
+        Frina (Guest Service Executive)<br>
+        <a href="tel:+6566888810" style="color:var(--teal);text-decoration:none;">+65 6688 8810</a> /
+        <a href="tel:+6592481489" style="color:var(--teal);text-decoration:none;">+65 9248 1489</a>
+      </div>
+    </div>
+    <a class="quick-link mt-8" href="https://www.marinabaysands.com" target="_blank">
+      <div class="ql-left"><span class="ql-icon">🔗</span><div><div class="ql-title">마리나베이샌즈 공식 사이트</div><div class="ql-sub">앱으로 Rise 뷔페 예약 · 10% 할인</div></div></div>
+      <span class="ql-arrow">›</span>
+    </a>
+  </div>
+
+  <!-- 풀만 -->
+  <div class="card">
+    <div class="card-title">🏨 풀만 싱가포르 힐 스트리트</div>
+    <div class="info-row">
+      <div class="info-label">Agoda 예약번호</div>
+      <div class="info-value mono">1740188163 <button class="copy-btn" onclick="copyText('1740188163')">복사</button></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">체크인</div>
+      <div class="info-value">8/4 (화) 도착시간 12:00-13:00 요청</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">체크아웃</div>
+      <div class="info-value">8/5 (수)</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">객실</div>
+      <div class="info-value">Deluxe Room · King Bed · Rain Shower<br><span style="font-size:0.7rem;color:var(--gray-400)">Bay View · 고층 · 신혼여행 요청 완료</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">주소</div>
+      <div class="info-value">1 Hill Street, Singapore 179949</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">취소 정책</div>
+      <div class="info-value" style="color:#FB7185">환불 불가</div>
+    </div>
+    <a class="quick-link mt-8" href="https://maps.apple.com/?q=Pullman+Singapore+Hill+Street" target="_blank">
+      <div class="ql-left"><span class="ql-icon">🗺</span><div><div class="ql-title">풀만 위치 보기</div><div class="ql-sub">1 Hill Street, Singapore</div></div></div>
+      <span class="ql-arrow">›</span>
+    </a>
+  </div>
+
+  <!-- 몰디브 리조트 예약 -->
+  <div class="card">
+    <div class="card-title">🏝️ 아웃리거 마푸시바루</div>
+    <div class="info-row">
+      <div class="info-label">신랑</div>
+      <div class="info-value">LEE HOIL</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">신부</div>
+      <div class="info-value">WON SOYEON</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">여행사 예약번호</div>
+      <div class="info-value mono">590424891 <button class="copy-btn" onclick="copyText('590424891')">복사</button></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">예약번호 2</div>
+      <div class="info-value mono">590424893 <button class="copy-btn" onclick="copyText('590424893')">복사</button></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">여행사</div>
+      <div class="info-value">
+        <a href="tel:0220036608" style="color:var(--teal);text-decoration:none;">02-2003-6608</a>
+        <div style="font-size:0.7rem;color:var(--gray-400)">수~금요일 문의</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 허니문 특전 -->
+  <div class="card">
+    <div class="card-title">🎁 허니문 특전</div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>도착 시 스파클링 와인 1병 + 과일바구니 + 허니문 케이크</span>
+    </div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>로맨틱 침대장식 + 욕조 셋업 1회</span>
+    </div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>식사 HB → AI 무료 업그레이드 (올인클루시브)</span>
+    </div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>리조트 크레딧 $100/커플 (8/5~10/31)</span>
+    </div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>추가 네고 1인 $200 (8/5~10/31)</span>
+    </div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>허니문 디너 셋업 1회 (Cuisine Gallery · 4박 이상)</span>
+    </div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>TMA VIP 라운지 이용</span>
+    </div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>데일리 선라이즈 &amp; 선셋 요가 클래스 (예약 필)</span>
+    </div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>스노클링 장비 무료대여 + 와이파이</span>
+    </div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>선셋크루즈 1회 (날씨 따라 변동)</span>
+    </div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>매주 별빛 야외영화 (일요일)</span>
+    </div>
+    <div class="included-item">
+      <span class="check">✓</span>
+      <span>테판야끼 석식 1회 (8/5~10/31)</span>
+    </div>
+  </div>
+
+  <!-- 할인 혜택 -->
+  <div class="card">
+    <div class="card-title">💸 할인 혜택</div>
+    <div class="discount-list">
+      <div class="discount-item">
+        <span class="discount-badge">25%</span>
+        <span>Destination Dining 할인</span>
+      </div>
+      <div class="discount-item">
+        <span class="discount-badge">10%</span>
+        <span>스파 트리트먼트 할인</span>
+      </div>
+      <div class="discount-item">
+        <span class="discount-badge">20%</span>
+        <span>소믈리에 와인리스트 할인</span>
+      </div>
+      <div class="discount-item">
+        <span class="discount-badge">20%</span>
+        <span>선셋피싱, 돌핀트립 익스커션 할인</span>
+      </div>
+      <div class="discount-item">
+        <span class="discount-badge">15%</span>
+        <span>워터스포츠 선택 할인 (Water Ski, Wakeboarding 등)</span>
+      </div>
+      <div class="discount-item">
+        <span class="discount-badge">10%</span>
+        <span>PADI 스쿠버다이빙 코스 할인</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 주의사항 -->
+  <div class="warning-card">
+    <div class="w-title">🚫 몰디브 금지 / 주의사항</div>
+    <div class="w-item">• 주류 및 돼지고기 반입 절대 금지 (이슬람 국가)</div>
+    <div class="w-item">• 수상비행기 마지막 운항 16:00~16:30 (일몰 이후 불가)</div>
+    <div class="w-item">• 항공 탑승 24시간 이내 다이빙 금지 (감압증 위험)</div>
+    <div class="w-item">• 국제선 연착 시 당일 리조트 입장 불가 → 말레 1박 후 이동 (비용 본인 부담)</div>
+    <div class="w-item">• 연착 시 반드시 담당자에게 사전 연락</div>
+    <div class="w-item">• 수상 활동 시 구명조끼 반드시 착용</div>
+  </div>
+
+  <!-- IMUGA -->
+  <div class="card">
+    <div class="card-title">📋 IMUGA 입국신고서</div>
+    <div class="included-item">
+      <span class="check">1</span>
+      <span>출발 96시간 전 (8월 1일)부터 작성 가능</span>
+    </div>
+    <div class="included-item">
+      <span class="check">2</span>
+      <span>여권 정보 / 항공편 정보 / 숙소 정보 / 얼굴 사진 필요</span>
+    </div>
+    <div class="included-item">
+      <span class="check">3</span>
+      <span>작성 후 QR코드 스크린샷 저장 필수</span>
+    </div>
+    <div class="included-item">
+      <span class="check">4</span>
+      <span>입국 시 QR코드 제시</span>
+    </div>
+    <a class="quick-link mt-8" href="https://www.travelsmarttravelfast.com/en/maldives/imuga/" target="_blank">
+      <div class="ql-left">
+        <span class="ql-icon">🔗</span>
+        <div>
+          <div class="ql-title">IMUGA 바로가기</div>
+          <div class="ql-sub">imuga.immigration.gov.mv/ethd</div>
+        </div>
+      </div>
+      <span class="ql-arrow">›</span>
+    </a>
+  </div>
+
+</section>
+
+<!-- ===================== DOCS PAGE ===================== -->
+<section class="page" id="page-docs">
+
+  <div class="page-title">📂 서류함</div>
+  <div class="page-subtitle">사진으로 저장 · 탭해서 보기 · 앱에 자동 저장</div>
+
+  <div id="doc-grid"></div>
+
+</section>
+
+<!-- ===================== FULLSCREEN VIEWER ===================== -->
+<div class="doc-viewer" id="doc-viewer">
+  <div class="doc-viewer-toolbar">
+    <span id="viewer-title" class="dv-title"></span>
+    <div class="dv-actions">
+      <button class="dv-btn" id="viewer-open-btn" style="display:none" onclick="openInNewTab()">↗ 열기</button>
+      <button class="dv-btn dv-delete" onclick="deleteCurrentDoc()">🗑 삭제</button>
+      <button class="dv-btn" onclick="closeViewer()">✕ 닫기</button>
+    </div>
+  </div>
+  <div class="doc-viewer-body">
+    <img id="viewer-img" src="" alt="" style="display:none">
+    <iframe id="viewer-frame"
+      style="display:none;width:100%;height:100%;border:none;border-radius:8px;background:white"
+      allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- ===================== TAB BAR ===================== -->
+<nav class="tab-bar">
+  <a class="tab-item active" href="#home" onclick="navigate('home', this)">
+    <span class="tab-icon">🏠</span>
+    <span class="tab-label">홈</span>
+  </a>
+  <a class="tab-item" href="#singapore" onclick="navigate('singapore', this)">
+    <span class="tab-icon">🇸🇬</span>
+    <span class="tab-label">싱가폴</span>
+  </a>
+  <a class="tab-item" href="#maldives" onclick="navigate('maldives', this)">
+    <span class="tab-icon">🏝️</span>
+    <span class="tab-label">몰디브</span>
+  </a>
+  <a class="tab-item" href="#docs" onclick="navigate('docs', this)">
+    <span class="tab-icon">📂</span>
+    <span class="tab-label">서류함</span>
+  </a>
+  <a class="tab-item" href="#checklist" onclick="navigate('checklist', this)">
+    <span class="tab-icon">✅</span>
+    <span class="tab-label">체크</span>
+  </a>
+  <a class="tab-item" href="#info" onclick="navigate('info', this)">
+    <span class="tab-icon">📋</span>
+    <span class="tab-label">정보</span>
+  </a>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>
