@@ -1,5 +1,44 @@
 'use strict';
 
+// ===== GitHub 설정 QR 공유 =====
+function showSetupQR() {
+  const s = getGhSettings();
+  if (!s?.token) { showToast('먼저 GitHub 설정을 저장해주세요'); return; }
+
+  const data = btoa(JSON.stringify(s));
+  const url  = location.origin + location.pathname + '#setup=' + data;
+
+  const modal  = document.getElementById('qr-modal');
+  const canvas = document.getElementById('qr-canvas');
+  modal.classList.add('open');
+
+  if (typeof QRCode !== 'undefined') {
+    QRCode.toCanvas(canvas, url, { width: 240, margin: 2, color: { dark: '#0F172A', light: '#FFFFFF' } });
+  } else {
+    showToast('QR 라이브러리 로딩 중...');
+  }
+}
+
+function closeQR() {
+  document.getElementById('qr-modal').classList.remove('open');
+}
+
+// URL 해시에서 setup 파라미터 읽어 자동 설정
+function checkSetupHash() {
+  const hash = location.hash || '';
+  if (!hash.startsWith('#setup=')) return;
+  try {
+    const data = JSON.parse(atob(hash.slice(7)));
+    if (data.user && data.repo && data.token) {
+      localStorage.setItem(GH_KEY, JSON.stringify(data));
+      history.replaceState(null, '', location.pathname); // 해시 제거
+      updateGhStatusText();
+      showToast('✅ GitHub 동기화 설정 완료!');
+      setTimeout(() => syncFromGitHub(true), 1000);
+    }
+  } catch { /* 파싱 실패 시 무시 */ }
+}
+
 // ===== 비밀번호 잠금 =====
 // 비밀번호 변경하려면: node -e "console.log(require('crypto').createHash('sha256').update('새비밀번호').digest('hex'))"
 const PW_HASH = 'a445b92ef7ba817efc27de361e28375a841dca08f5858e10838c52683b23ed9d'; // 기본: 0803
@@ -57,6 +96,7 @@ function handleHash() {
 
 window.addEventListener('hashchange', handleHash);
 window.addEventListener('DOMContentLoaded', () => {
+  checkSetupHash(); // QR 스캔으로 열린 경우 먼저 설정
   initAuth();
   handleHash();
   initCountdown();
@@ -1059,7 +1099,16 @@ async function syncFromGitHub(showFeedback = false) {
     for (const file of files) {
       const id       = file.name.replace(/\.[^.]+$/, '');
       const existing = await getDocData(id).catch(() => null);
-      if (existing) continue;
+
+      if (existing) {
+        // 로컬에 자동 생성된 PNG가 있는데 GitHub엔 사용자가 올린 PDF/다른 파일이 있으면
+        // GitHub 버전이 우선 (사용자가 직접 올린 파일이 더 최신)
+        const localIsPreloadedPng = existing.type?.startsWith('image/') &&
+          PRELOAD_DOCS.some(p => p.id === id && p.type === 'image/png');
+        const ghIsUserFile = !file.name.endsWith('.png') || !localIsPreloadedPng;
+        if (!localIsPreloadedPng || !ghIsUserFile) continue;
+        // 자동 PNG를 사용자 파일로 교체
+      }
 
       // raw URL로 직접 다운로드 (API content보다 빠름)
       const dlRes = await fetch(file.download_url);

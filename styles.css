@@ -1239,6 +1239,45 @@ body {
 .sync-badge.uploading { background: #FEF3C7; color: #92400E; }
 .sync-badge.error { background: #FEE2E2; color: #991B1B; }
 
+/* ===== QR 공유 모달 ===== */
+.qr-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+  padding: 24px;
+}
+.qr-modal.open { display: flex; }
+
+.qr-card {
+  background: white;
+  border-radius: 24px;
+  padding: 28px 24px 20px;
+  text-align: center;
+  max-width: 320px;
+  width: 100%;
+}
+.qr-title { font-size: 1.1rem; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.qr-sub { font-size: 0.8rem; color: var(--gray-500); margin-bottom: 20px; line-height: 1.5; }
+#qr-canvas { border-radius: 12px; }
+.qr-warn { font-size: 0.72rem; color: #F97316; margin-top: 14px; }
+.qr-close-btn {
+  margin-top: 16px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: var(--gray-100);
+  color: var(--gray-600);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
 /* ===== TAB BAR (6 tabs) ===== */
 .tab-bar .tab-item .tab-label { font-size: 0.55rem; }
 
