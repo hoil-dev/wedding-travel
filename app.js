@@ -886,39 +886,59 @@ function dataUrlToObjectUrl(dataUrl, mimeType) {
   return URL.createObjectURL(blob);
 }
 
-let _viewerBlobUrl = null;
+let _viewerBlobUrl  = null;
+let _pendingPdfData = null; // iOS에서 PDF 탭으로 열기용
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
 
 async function openViewer(id, label) {
   const doc = await getDocData(id);
   if (!doc) return;
 
-  // 이전 blob URL 해제
   if (_viewerBlobUrl) { URL.revokeObjectURL(_viewerBlobUrl); _viewerBlobUrl = null; }
+  _pendingPdfData = null;
 
   viewerCurrentId = id;
-  const viewer      = document.getElementById('doc-viewer');
-  const titleEl     = document.getElementById('viewer-title');
-  const imgEl       = document.getElementById('viewer-img');
-  const frameEl     = document.getElementById('viewer-frame');
-  const openBtn     = document.getElementById('viewer-open-btn');
+  const viewer  = document.getElementById('doc-viewer');
+  const titleEl = document.getElementById('viewer-title');
+  const imgEl   = document.getElementById('viewer-img');
+  const frameEl = document.getElementById('viewer-frame');
+  const openBtn = document.getElementById('viewer-open-btn');
 
-  titleEl.textContent = label;
+  titleEl.textContent   = label;
   imgEl.style.display   = 'none';
   frameEl.style.display = 'none';
   frameEl.src           = 'about:blank';
+  frameEl.srcdoc        = '';
   openBtn.style.display = 'none';
 
   const type = doc.type || '';
 
   if (type === 'application/pdf') {
-    // data URL → Blob → Object URL → iframe (직접 data URL은 iOS에서 미지원)
-    _viewerBlobUrl = dataUrlToObjectUrl(doc.dataUrl, 'application/pdf');
-    frameEl.style.display = 'block';
-    frameEl.src = _viewerBlobUrl;
-    openBtn.style.display = 'inline-block'; // 새 탭에서도 열 수 있게
+    if (isIOS) {
+      // iOS: iframe에서 PDF blob URL 미지원 → 탭으로 여는 버튼 표시
+      _pendingPdfData = doc.dataUrl;
+      frameEl.style.display = 'block';
+      frameEl.srcdoc = `<!DOCTYPE html><html><body style="margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:#0F172A;font-family:sans-serif">
+        <div style="text-align:center;color:white;padding:24px">
+          <div style="font-size:5rem;margin-bottom:16px">📄</div>
+          <div style="font-size:1rem;font-weight:700;margin-bottom:8px">${label.replace(/'/g,"&#39;")}</div>
+          <div style="font-size:0.85rem;opacity:0.6;margin-bottom:28px">PDF 파일</div>
+          <button onclick="window.parent.openPdfNative()"
+            style="background:#0891B2;color:white;border:none;padding:16px 32px;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer">
+            📖 PDF 열기
+          </button>
+        </div>
+      </body></html>`;
+      openBtn.style.display = 'inline-block';
+    } else {
+      // 데스크톱: iframe에서 직접 표시
+      _viewerBlobUrl = dataUrlToObjectUrl(doc.dataUrl, 'application/pdf');
+      frameEl.style.display = 'block';
+      frameEl.src = _viewerBlobUrl;
+      openBtn.style.display = 'inline-block';
+    }
   } else if (type === 'text/html' || type.includes('html')) {
-    // charset 없이 Blob 생성 → 브라우저가 HTML 내 <meta charset> 직접 읽음
-    // (UTF-8, EUC-KR 모두 올바르게 렌더링)
+    // HTML: blob URL → 브라우저가 <meta charset> 읽어 인코딩 처리 (UTF-8, EUC-KR 모두)
     _viewerBlobUrl = dataUrlToObjectUrl(doc.dataUrl, 'text/html');
     frameEl.style.display = 'block';
     frameEl.src = _viewerBlobUrl;
@@ -932,10 +952,17 @@ async function openViewer(id, label) {
   document.body.style.overflow = 'hidden';
 }
 
+// iOS에서 PDF 탭으로 열기 (iframe 내 버튼에서 호출)
+function openPdfNative() {
+  if (!_pendingPdfData) return;
+  const blobUrl = dataUrlToObjectUrl(_pendingPdfData, 'application/pdf');
+  window.open(blobUrl, '_blank');
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+}
+
 function openInNewTab() {
-  if (_viewerBlobUrl) {
-    window.open(_viewerBlobUrl, '_blank');
-  }
+  if (_viewerBlobUrl) window.open(_viewerBlobUrl, '_blank');
+  else if (_pendingPdfData) openPdfNative();
 }
 
 function closeViewer() {
