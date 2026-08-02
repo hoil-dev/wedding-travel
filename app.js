@@ -1145,12 +1145,12 @@ const PRELOAD_DOCS = [
   { id: 'flight-out',   src: 'docs/flight-out.png',        type: 'image/png', v: 1 },
   { id: 'flight-ret',   src: 'docs/flight-ret.png',        type: 'image/png', v: 3 },
   { id: 'maldives-v',   src: 'docs/maldives-v.png',        type: 'image/png', v: 1 },
-  { id: 'tip-001', src: 'docs/tips/tip-001.jpg', type: 'image/jpeg', v: 1 },
-  { id: 'tip-002', src: 'docs/tips/tip-002.jpg', type: 'image/jpeg', v: 1 },
-  { id: 'tip-003', src: 'docs/tips/tip-003.jpg', type: 'image/jpeg', v: 1 },
-  { id: 'tip-004', src: 'docs/tips/tip-004.jpg', type: 'image/jpeg', v: 1 },
-  { id: 'tip-005', src: 'docs/tips/tip-005.jpg', type: 'image/jpeg', v: 1 },
-  { id: 'tip-006', src: 'docs/tips/tip-006.jpg', type: 'image/jpeg', v: 1 },
+  { id: 'tip-001', src: 'docs/tips/tip-001.png', type: 'image/png', v: 1 },
+  { id: 'tip-002', src: 'docs/tips/tip-002.png', type: 'image/png', v: 1 },
+  { id: 'tip-003', src: 'docs/tips/tip-003.png', type: 'image/png', v: 1 },
+  { id: 'tip-004', src: 'docs/tips/tip-004.png', type: 'image/png', v: 1 },
+  { id: 'tip-005', src: 'docs/tips/tip-005.png', type: 'image/png', v: 1 },
+  { id: 'tip-006', src: 'docs/tips/tip-006.png', type: 'image/png', v: 1 },
 ];
 
 async function preloadVouchers() {

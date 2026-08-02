@@ -1,4 +1,4 @@
-const CACHE = 'honeymoon-v4';
+const CACHE = 'honeymoon-v5';
 const BASE  = '/wedding-travel';
 const ASSETS = [
   BASE + '/',
@@ -13,17 +13,23 @@ const ASSETS = [
   BASE + '/docs/flight-out.png',
   BASE + '/docs/flight-ret.png',
   BASE + '/docs/maldives-v.png',
-  BASE + '/docs/tips/tip-001.jpg',
-  BASE + '/docs/tips/tip-002.jpg',
-  BASE + '/docs/tips/tip-003.jpg',
-  BASE + '/docs/tips/tip-004.jpg',
-  BASE + '/docs/tips/tip-005.jpg',
-  BASE + '/docs/tips/tip-006.jpg',
+  BASE + '/docs/tips/tip-001.png',
+  BASE + '/docs/tips/tip-002.png',
+  BASE + '/docs/tips/tip-003.png',
+  BASE + '/docs/tips/tip-004.png',
+  BASE + '/docs/tips/tip-005.png',
+  BASE + '/docs/tips/tip-006.png',
 ];
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE).then(async c => {
+      // 파일 하나 실패해도 전체가 죽지 않도록 개별 처리
+      await Promise.allSettled(ASSETS.map(url =>
+        c.add(url).catch(err => console.warn('SW cache skip:', url, err.message))
+      ));
+      return self.skipWaiting();
+    })
   );
 });
 
