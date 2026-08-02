@@ -5,17 +5,25 @@ function showSetupQR() {
   const s = getGhSettings();
   if (!s?.token) { showToast('먼저 GitHub 설정을 저장해주세요'); return; }
 
-  const data = btoa(JSON.stringify(s));
-  const url  = location.origin + location.pathname + '#setup=' + data;
+  const data = btoa(unescape(encodeURIComponent(JSON.stringify(s))));
+  const url  = 'https://hoil-dev.github.io/wedding-travel/#setup=' + data;
 
-  const modal  = document.getElementById('qr-modal');
-  const canvas = document.getElementById('qr-canvas');
+  const modal     = document.getElementById('qr-modal');
+  const container = document.getElementById('qr-container');
+  container.innerHTML = '';
   modal.classList.add('open');
 
   if (typeof QRCode !== 'undefined') {
-    QRCode.toCanvas(canvas, url, { width: 240, margin: 2, color: { dark: '#0F172A', light: '#FFFFFF' } });
+    new QRCode(container, {
+      text: url,
+      width: 240,
+      height: 240,
+      colorDark: '#0F172A',
+      colorLight: '#FFFFFF',
+      correctLevel: QRCode.CorrectLevel.M,
+    });
   } else {
-    showToast('QR 라이브러리 로딩 중...');
+    container.innerHTML = '<p style="color:#64748B;font-size:0.8rem;padding:20px">QR 라이브러리 로딩 실패<br>페이지를 새로고침 해주세요</p>';
   }
 }
 

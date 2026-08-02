@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="icon" href="favicon.ico" sizes="32x32">
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="qrcode.min.js"></script>
 </head>
 <body>
 
@@ -1468,7 +1468,7 @@
   <div class="qr-card">
     <div class="qr-title">📱 아이폰으로 스캔</div>
     <div class="qr-sub">카메라로 QR 코드를 스캔하면<br>앱에서 GitHub 동기화가 자동 설정돼요</div>
-    <canvas id="qr-canvas"></canvas>
+    <div id="qr-container" style="display:inline-block;border-radius:12px;overflow:hidden"></div>
     <div class="qr-warn">⚠️ 화면을 다른 사람에게 보여주지 마세요</div>
     <button class="qr-close-btn" onclick="closeQR()">닫기</button>
   </div>
